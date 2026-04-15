@@ -474,6 +474,62 @@
     ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 3px; }
     ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.15); }
 
+    /* ─── HAMBURGER / MOBILE NAV ─── */
+    .hamburger-btn {
+      display: none;
+      width: 36px; height: 36px; border-radius: var(--card-radius);
+      background: transparent; border: 1px solid var(--border);
+      align-items: center; justify-content: center;
+      cursor: pointer; font-size: 20px; color: var(--text);
+      margin-left: 8px; flex-shrink: 0;
+      transition: border-color var(--transition);
+    }
+    .hamburger-btn:hover { border-color: var(--border2); }
+
+    .mobile-nav {
+      display: none;
+      position: fixed; top: 58px; left: 0; right: 0; z-index: 198;
+      background: #000;
+      border-bottom: 1px solid rgba(255,255,255,0.12);
+      flex-direction: column;
+    }
+    .mobile-nav.open { display: flex; }
+    .mobile-nav-link {
+      display: flex; align-items: center;
+      padding: 16px 24px;
+      font-size: 15px; font-weight: 600; color: var(--muted);
+      cursor: pointer; border-bottom: 1px solid var(--border);
+      transition: color var(--transition), background var(--transition);
+    }
+    .mobile-nav-link:hover { color: var(--text); background: rgba(255,255,255,0.03); }
+    .mobile-nav-link.active { color: var(--text); }
+    .mobile-nav-link .nav-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--accent); margin-right: 12px;
+      opacity: 0; transition: opacity var(--transition);
+    }
+    .mobile-nav-link.active .nav-dot { opacity: 1; }
+    .mobile-nav-search {
+      padding: 12px 24px 16px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .mobile-nav-search #mobileSearchInput {
+      flex: 1;
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: var(--card-radius);
+      padding: 9px 14px;
+      font-size: 14px; font-family: inherit; color: var(--text);
+      outline: none;
+    }
+    .mobile-nav-search #mobileSearchInput::placeholder { color: var(--muted); }
+    .mobile-nav-search #mobileSearchInput:focus { border-color: var(--accent); }
+    .mobile-nav-overlay {
+      display: none;
+      position: fixed; inset: 0; top: 58px; z-index: 197;
+      background: rgba(0,0,0,0.5);
+    }
+    .mobile-nav-overlay.open { display: block; }
+
     /* ─── RESPONSIVE ─── */
     @media (max-width: 960px) {
       .editorial-title { font-size: 32px; }
@@ -486,20 +542,199 @@
       #searchInput:focus { width: 210px; }
     }
     @media (max-width: 680px) {
+      .topnav-nav { display: none; }
+      .search-wrap { display: none; }
+      .hamburger-btn { display: flex; }
+      .topnav-inner { padding: 0 16px; }
+      .topnav-right { gap: 6px; }
       .editorial-header { flex-direction: column; align-items: flex-start; gap: 20px; }
       .editorial-count { text-align: left; }
       .editorial-title { font-size: 26px; }
       .count-num { font-size: 50px; }
       .grid-view { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; }
       .logo-sub { display: none; }
-      #searchInput { width: 120px; }
-      #searchInput:focus { width: 155px; }
       .detail-grid { grid-template-columns: repeat(2, 1fr); }
-      .filter-strip-inner { gap: 6px; overflow-x: auto; }
-      .filter-select { font-size: 11px; padding: 4px 7px; }
+      .filter-strip-inner { gap: 6px; overflow-x: auto; padding-bottom: 4px; }
+      .filter-select { font-size: 11px; padding: 4px 7px; max-width: 120px; }
     }
     @media (max-width: 440px) {
       .grid-view { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+    }
+
+    /* ═══════════════════════════════════════════════════
+       LIGHT THEME
+    ═══════════════════════════════════════════════════ */
+    [data-theme="light"] {
+      --bg: #f5f5f2;
+      --surface: #ffffff;
+      --surface2: #eeeeed;
+      --surface3: #e3e3e0;
+      --border: rgba(0,0,0,0.09);
+      --border2: rgba(0,0,0,0.22);
+      --text: #0f0f0f;
+      --text2: #2a2a2a;
+      --muted: #666666;
+      --muted2: #b0b0b0;
+    }
+    [data-theme="light"] body { background: var(--bg); }
+    [data-theme="light"] .topnav { background: #fff; border-bottom-color: rgba(0,0,0,0.1); }
+    [data-theme="light"] .filter-strip { background: #f0f0ee; }
+    [data-theme="light"] .mobile-nav { background: #fff; border-bottom-color: rgba(0,0,0,0.1); }
+    [data-theme="light"] .mobile-nav-overlay { background: rgba(0,0,0,0.35); }
+    [data-theme="light"] .album-card:hover { box-shadow: 0 8px 28px rgba(0,0,0,0.12); }
+    [data-theme="light"] .modal-backdrop { background: rgba(0,0,0,0.65); }
+    [data-theme="light"] .modal { background: #fff; border-color: rgba(0,0,0,0.12); }
+    [data-theme="light"] .toast { background: #fff; }
+    [data-theme="light"] .artist-hero-gradient {
+      background: linear-gradient(160deg, rgba(245,245,242,0.05) 0%, rgba(245,245,242,0.97) 100%);
+    }
+    [data-theme="light"] .artist-modal { background: #fff; border-color: rgba(0,0,0,0.12); }
+    [data-theme="light"] .artist-hero-tag { background: rgba(0,0,0,0.06); }
+    [data-theme="light"] .modal-hero-content {
+      background: linear-gradient(to bottom, transparent 0%, rgba(245,245,242,0.97) 100%);
+    }
+    [data-theme="light"] .theme-btn-icon-dark { display: none; }
+    [data-theme="light"] .theme-btn-icon-light { display: inline; }
+    .theme-btn-icon-light { display: none; }
+    .theme-btn-icon-dark  { display: inline; }
+
+    /* ═══════════════════════════════════════════════════
+       BANDAS / ARTISTAS PAGE
+    ═══════════════════════════════════════════════════ */
+    .artist-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(155px, 1fr)); gap: 18px;
+    }
+    .artist-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--card-radius); overflow: hidden; cursor: pointer;
+      transition: transform var(--transition), border-color var(--transition), box-shadow var(--transition);
+    }
+    .artist-card:hover { border-color: var(--border2); transform: translateY(-3px); box-shadow: 0 8px 28px rgba(0,0,0,0.3); }
+    .artist-img-wrap {
+      position: relative; aspect-ratio: 1; overflow: hidden;
+      background: linear-gradient(135deg, var(--surface2), var(--surface3));
+    }
+    .artist-img { width: 100%; height: 100%; object-fit: cover; object-position: top center; display: block; transition: transform 0.3s ease; }
+    .artist-card:hover .artist-img { transform: scale(1.05); }
+    .artist-img-ph {
+      position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+      font-size: 40px; color: var(--muted2);
+    }
+    .artist-info { padding: 11px 12px 13px; }
+    .artist-name { font-size: 13px; font-weight: 800; color: var(--text); margin-bottom: 3px; line-height: 1.3;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .artist-meta { font-size: 11px; color: var(--muted); display: flex; align-items: center; gap: 4px; }
+    .artist-count-n { font-size: 15px; font-weight: 900; color: var(--accent); letter-spacing: -0.5px; }
+
+    .artists-header-bar { display: flex; align-items: center; gap: 10px; padding: 20px 0 22px; flex-wrap: wrap; }
+    .artists-search-wrap { position: relative; flex: 1; max-width: 300px; min-width: 150px; }
+    .artists-search-wrap input {
+      width: 100%; background: var(--surface2); border: 1px solid var(--border);
+      border-radius: var(--card-radius); padding: 8px 12px 8px 34px;
+      font-size: 13px; font-family: inherit; color: var(--text); outline: none;
+      transition: border-color var(--transition);
+    }
+    .artists-search-wrap input::placeholder { color: var(--muted); }
+    .artists-search-wrap input:focus { border-color: var(--accent); }
+    .artists-search-icon { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); font-size: 13px; color: var(--muted); pointer-events: none; }
+    .artists-sort-sel { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--card-radius); padding: 7px 10px; font-size: 12px; font-family: inherit; color: var(--text2); outline: none; cursor: pointer; }
+    .artists-count-label { font-size: 13px; color: var(--muted); margin-left: auto; }
+
+    /* ─── ARTIST MODAL ─── */
+    .artist-modal-backdrop {
+      position: fixed; inset: 0; z-index: 1000;
+      background: rgba(0,0,0,0.88); backdrop-filter: blur(4px);
+      display: flex; align-items: center; justify-content: center;
+      padding: 20px; opacity: 0; pointer-events: none;
+      transition: opacity 0.2s ease;
+    }
+    .artist-modal-backdrop.open { opacity: 1; pointer-events: all; }
+    .artist-modal {
+      background: var(--surface); border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 4px; width: 100%; max-width: 760px; max-height: 92vh;
+      overflow-y: auto; transform: scale(0.96) translateY(14px);
+      transition: transform 0.2s ease; position: relative;
+    }
+    .artist-modal-backdrop.open .artist-modal { transform: scale(1) translateY(0); }
+
+    .artist-hero { position: relative; min-height: 265px; overflow: hidden; }
+    .artist-hero-bg {
+      position: absolute; inset: -20px;
+      filter: blur(45px) saturate(1.4); opacity: 0.3; transform: scale(1.15);
+      width: calc(100% + 40px); height: calc(100% + 40px); object-fit: cover;
+    }
+    .artist-hero-gradient {
+      position: absolute; inset: 0;
+      background: linear-gradient(160deg, rgba(10,10,10,0.05) 0%, rgba(10,10,10,0.97) 100%);
+    }
+    .artist-hero-content {
+      position: relative; z-index: 1; display: flex; align-items: flex-end; gap: 22px;
+      padding: 30px 28px 24px; min-height: 265px;
+    }
+    .artist-portrait { width: 130px; height: 130px; border-radius: 3px; object-fit: cover; object-position: top; box-shadow: 0 8px 28px rgba(0,0,0,0.55); flex-shrink: 0; }
+    .artist-portrait-ph { width: 130px; height: 130px; border-radius: 3px; background: var(--surface2); display: flex; align-items: center; justify-content: center; font-size: 48px; color: var(--muted2); flex-shrink: 0; border: 1px solid var(--border); }
+    .artist-hero-info { flex: 1; min-width: 0; }
+    .artist-hero-eyebrow { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; color: var(--accent); margin-bottom: 7px; }
+    .artist-hero-name { font-family: 'DM Serif Display', Georgia, serif; font-size: 30px; font-weight: 400; line-height: 1.15; margin-bottom: 9px; }
+    .artist-hero-tags { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 12px; }
+    .artist-hero-tag { font-size: 10.5px; font-weight: 600; padding: 2px 8px; border-radius: 2px; background: rgba(255,255,255,0.08); color: var(--muted); border: 1px solid var(--border); }
+    .artist-hero-stats { display: flex; gap: 20px; }
+    .ahs-num { font-size: 22px; font-weight: 900; color: var(--accent); letter-spacing: -0.5px; line-height: 1; display: block; }
+    .ahs-lbl { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); display: block; margin-top: 2px; }
+
+    .artist-modal-body { padding: 22px 28px 32px; }
+    .a-section { margin-bottom: 26px; }
+    .a-section-title { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; color: var(--muted); margin-bottom: 13px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+
+    .a-bio { font-size: 13.5px; line-height: 1.75; color: var(--text2); }
+    .a-bio p { margin-bottom: 10px; }
+    .a-bio p:last-child { margin-bottom: 0; }
+
+    .a-albums-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(82px, 1fr)); gap: 10px; }
+    .a-album-mini { cursor: pointer; transition: opacity var(--transition); }
+    .a-album-mini:hover { opacity: 0.72; }
+    .a-album-mini-cover { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 2px; background: var(--surface2); display: block; margin-bottom: 5px; }
+    .a-album-mini-ph { width: 100%; aspect-ratio: 1; border-radius: 2px; background: var(--surface2); display: flex; align-items: center; justify-content: center; font-size: 20px; color: var(--muted2); margin-bottom: 5px; }
+    .a-album-mini-rank { font-size: 11px; font-weight: 900; color: var(--accent); }
+    .a-album-mini-title { font-size: 10px; font-weight: 700; color: var(--text); line-height: 1.25; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .a-album-mini-year { font-size: 9.5px; color: var(--muted); }
+
+    .disco-list { display: flex; flex-direction: column; gap: 6px; max-height: 370px; overflow-y: auto; }
+    .disco-row {
+      display: flex; align-items: center; gap: 10px;
+      padding: 8px 10px; border-radius: 2px;
+      background: var(--surface2); border: 1px solid var(--border);
+      transition: border-color var(--transition);
+    }
+    .disco-row:hover { border-color: var(--border2); }
+    .disco-row.in-col { border-left: 3px solid var(--accent); cursor: pointer; }
+    .disco-img { width: 38px; height: 38px; border-radius: 2px; object-fit: cover; flex-shrink: 0; background: var(--surface3); }
+    .disco-ph { width: 38px; height: 38px; border-radius: 2px; background: var(--surface3); display: flex; align-items: center; justify-content: center; font-size: 15px; color: var(--muted2); flex-shrink: 0; }
+    .disco-info { flex: 1; min-width: 0; }
+    .disco-name { font-size: 12.5px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .disco-sub { font-size: 10.5px; color: var(--muted); }
+    .disco-rank-badge { font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: var(--accent); border: 1px solid rgba(232,55,60,0.45); padding: 2px 6px; border-radius: 2px; flex-shrink: 0; }
+
+    .similar-wrap { display: flex; flex-wrap: wrap; gap: 7px; }
+    .similar-tag { padding: 6px 13px; border-radius: 20px; background: var(--surface2); border: 1px solid var(--border); font-size: 12px; font-weight: 600; cursor: pointer; transition: all var(--transition); white-space: nowrap; }
+    .similar-tag:hover { border-color: var(--accent); color: var(--accent); }
+    .similar-tag.no-lib { opacity: 0.42; cursor: default; }
+    .similar-tag.no-lib:hover { border-color: var(--border); color: inherit; }
+
+    .curiosity-list { display: flex; flex-direction: column; gap: 9px; }
+    .curiosity-row { display: flex; gap: 12px; align-items: flex-start; padding: 12px 14px; border-radius: 3px; background: var(--surface2); border: 1px solid var(--border); }
+    .curiosity-icon { font-size: 18px; flex-shrink: 0; line-height: 1.5; }
+    .curiosity-text { font-size: 13px; line-height: 1.65; color: var(--text2); }
+
+    @media (max-width: 680px) {
+      .artist-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; }
+      .artist-hero-content { flex-direction: column; align-items: flex-start; gap: 14px; padding: 20px; min-height: 0; }
+      .artist-hero-name { font-size: 22px; }
+      .artist-modal-body { padding: 16px 18px 28px; }
+      .a-albums-grid { grid-template-columns: repeat(auto-fill, minmax(72px, 1fr)); }
+    }
+    @media (max-width: 440px) {
+      .artist-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
     }
   </style>
 </head>
@@ -514,7 +749,8 @@
     </div>
     <nav class="topnav-nav">
       <a class="nav-link active" data-page="collection" onclick="navigate('collection')">Coleção</a>
-      <a class="nav-link" data-page="map" onclick="navigate('map')">Mapa Mundial</a>
+      <a class="nav-link" data-page="artists" onclick="navigate('artists')">Bandas</a>
+      <a class="nav-link" data-page="map" onclick="navigate('map')">Mapa</a>
       <a class="nav-link" data-page="stats" onclick="navigate('stats')">Estatísticas</a>
     </nav>
     <div class="topnav-right">
@@ -526,10 +762,41 @@
         <button class="view-btn active" id="viewGrid" title="Grade" onclick="setView('grid')">⊞</button>
         <button class="view-btn" id="viewList" title="Lista" onclick="setView('list')">≡</button>
       </div>
+      <button class="view-btn" id="themeBtn" title="Alternar tema claro/escuro" onclick="toggleTheme()" style="border-color:rgba(255,255,255,0.15);font-size:16px">
+        <span class="theme-btn-icon-dark">☀</span>
+        <span class="theme-btn-icon-light">🌙</span>
+      </button>
       <button class="view-btn" id="settingsBtn" title="Configurar Last.fm API" onclick="openSettings()" style="border-color:rgba(255,255,255,0.15)">⚙</button>
     </div>
+    <button class="hamburger-btn" id="hamburgerBtn" onclick="toggleMobileNav()" aria-label="Menu">☰</button>
   </div>
 </header>
+
+<!-- ══════════ MOBILE NAV ══════════ -->
+<div class="mobile-nav-overlay" id="mobileNavOverlay" onclick="closeMobileNav()"></div>
+<nav class="mobile-nav" id="mobileNav">
+  <a class="mobile-nav-link active" data-page="collection" onclick="mobileNavigate('collection')">
+    <span class="nav-dot"></span>Coleção
+  </a>
+  <a class="mobile-nav-link" data-page="artists" onclick="mobileNavigate('artists')">
+    <span class="nav-dot"></span>Bandas
+  </a>
+  <a class="mobile-nav-link" data-page="map" onclick="mobileNavigate('map')">
+    <span class="nav-dot"></span>Mapa Mundial
+  </a>
+  <a class="mobile-nav-link" data-page="stats" onclick="mobileNavigate('stats')">
+    <span class="nav-dot"></span>Estatísticas
+  </a>
+  <div class="mobile-nav-search">
+    <input type="text" id="mobileSearchInput" placeholder="🔎 Buscar álbum, artista..." />
+  </div>
+  <div style="padding:12px 24px 16px;border-top:1px solid var(--border)">
+    <button onclick="toggleTheme();closeMobileNav()" style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--card-radius);padding:10px 18px;font-size:13px;font-family:inherit;color:var(--text);cursor:pointer;width:100%;text-align:left;font-weight:600">
+      <span class="theme-btn-icon-dark">☀ Modo Claro</span>
+      <span class="theme-btn-icon-light">🌙 Modo Escuro</span>
+    </button>
+  </div>
+</nav>
 
 <!-- ══════════ SETTINGS MODAL (Last.fm) ══════════ -->
 <div class="modal-backdrop" id="settingsBackdrop" onclick="closeSettingsOutside(event)" style="z-index:2000">
@@ -597,7 +864,8 @@
     </select>
     <div class="filter-divider"></div>
     <select class="filter-select" id="sortFilter" onchange="applyFilters()">
-      <option value="rank">Por Ranking</option>
+      <option value="rank-desc">Descobrir (#1000→#1)</option>
+      <option value="rank">Por Ranking (#1→#1000)</option>
       <option value="title">Por Título</option>
       <option value="artist">Por Artista</option>
       <option value="year">Por Ano</option>
@@ -636,6 +904,36 @@
       <h3>Nenhum álbum encontrado</h3>
       <p>Tente ajustar os filtros ou o termo de busca.</p>
     </div>
+  </div>
+
+  <!-- ── BANDAS / ARTISTAS ── -->
+  <div class="page" id="page-artists">
+    <div class="editorial-header">
+      <div>
+        <div class="editorial-eyebrow">Discoteca</div>
+        <h1 style="font-family:'Inter',-apple-system,sans-serif;font-size:42px;font-weight:900;letter-spacing:-2.5px;line-height:1.05;margin-bottom:10px;color:var(--text)">
+          Bandas <span style="color:var(--accent)">&</span> Artistas
+        </h1>
+        <p class="editorial-sub">Explore os artistas da coleção — biografia, discografia e curiosidades.</p>
+      </div>
+      <div class="editorial-count">
+        <span class="count-num" id="artistsHeroCount">0</span>
+        <span class="count-label">artistas</span>
+      </div>
+    </div>
+    <div class="artists-header-bar">
+      <div class="artists-search-wrap">
+        <span class="artists-search-icon">🔎</span>
+        <input type="text" id="artistsSearchInput" placeholder="Buscar artista ou banda..." oninput="onArtistsSearch(this.value)" />
+      </div>
+      <select class="artists-sort-sel" id="artistsSortSel" onchange="renderArtistsPage()">
+        <option value="name">A → Z</option>
+        <option value="count">Mais álbuns</option>
+        <option value="rank">Melhor rank</option>
+      </select>
+      <span class="artists-count-label" id="artistsCountLabel"></span>
+    </div>
+    <div class="artist-grid" id="artistGrid"></div>
   </div>
 
   <!-- ── MAPA MUNDIAL ── -->
@@ -679,6 +977,14 @@
   </div>
 
 </main>
+
+<!-- ══════════ ARTIST MODAL ══════════ -->
+<div class="artist-modal-backdrop" id="artistModalBackdrop" onclick="closeArtistOutside(event)">
+  <div class="artist-modal" id="artistModal">
+    <button class="modal-close" onclick="closeArtistModal()">✕</button>
+    <div id="artistModalContent"></div>
+  </div>
+</div>
 
 <!-- ══════════ MODAL ══════════ -->
 <div class="modal-backdrop" id="modalBackdrop" onclick="closeModal(event)">
@@ -744,7 +1050,7 @@ let activeCountry = 'all';
 let activeYear    = 'all';
 let activeDecade  = 'all';
 let searchQuery   = '';
-let sortBy        = 'rank';
+let sortBy        = 'rank-desc';
 let mapInstance   = null;
 
 // ═══════════════════════════════════════════════════
@@ -754,10 +1060,11 @@ function navigate(page) {
   currentPage = page;
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById('page-' + page)?.classList.add('active');
-  document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active'));
-  document.querySelector(`.nav-link[data-page="${page}"]`)?.classList.add('active');
-  if (page === 'stats') renderStats();
-  if (page === 'map')   renderMapPage();
+  document.querySelectorAll('.nav-link, .mobile-nav-link').forEach(n => n.classList.remove('active'));
+  document.querySelectorAll(`.nav-link[data-page="${page}"], .mobile-nav-link[data-page="${page}"]`).forEach(n => n.classList.add('active'));
+  if (page === 'stats')   renderStats();
+  if (page === 'map')     renderMapPage();
+  if (page === 'artists') renderArtistsPage();
 }
 
 // ═══════════════════════════════════════════════════
@@ -816,12 +1123,13 @@ function getFiltered() {
     items = items.filter(a => a.year && Math.floor(a.year/10)*10 === d);
   }
   items.sort((a,b) => {
-    if (sortBy==='rank')    return a.rank - b.rank;
-    if (sortBy==='title')   return a.title.localeCompare(b.title);
-    if (sortBy==='artist')  return a.artist.localeCompare(b.artist);
-    if (sortBy==='year')    return (a.year||0) - (b.year||0);
-    if (sortBy==='genre')   return (a.genre||'').localeCompare(b.genre||'');
-    if (sortBy==='country') return (a.country||'').localeCompare(b.country||'');
+    if (sortBy==='rank')      return a.rank - b.rank;
+    if (sortBy==='rank-desc') return b.rank - a.rank;
+    if (sortBy==='title')     return a.title.localeCompare(b.title);
+    if (sortBy==='artist')    return a.artist.localeCompare(b.artist);
+    if (sortBy==='year')      return (a.year||0) - (b.year||0);
+    if (sortBy==='genre')     return (a.genre||'').localeCompare(b.genre||'');
+    if (sortBy==='country')   return (a.country||'').localeCompare(b.country||'');
     return 0;
   });
   return items;
@@ -858,7 +1166,7 @@ function renderCollection() {
 }
 
 function cardHTML(a) {
-  const isTop10 = a.rank<=10 && sortBy==='rank' && activeGenre==='all' && activeCountry==='all' && activeYear==='all' && activeDecade==='all' && !searchQuery;
+  const isTop10 = a.rank<=10 && (sortBy==='rank'||sortBy==='rank-desc') && activeGenre==='all' && activeCountry==='all' && activeYear==='all' && activeDecade==='all' && !searchQuery;
   const coverSrc = a.cover
     ? `<img class="album-cover" src="${esc(a.cover)}" alt="${esc(a.title)}" loading="lazy"
          onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
@@ -1284,10 +1592,47 @@ function renderStats() {
 }
 
 // ═══════════════════════════════════════════════════
+//  MOBILE NAV
+// ═══════════════════════════════════════════════════
+function toggleMobileNav() {
+  const nav     = document.getElementById('mobileNav');
+  const overlay = document.getElementById('mobileNavOverlay');
+  const btn     = document.getElementById('hamburgerBtn');
+  const isOpen  = nav.classList.contains('open');
+  nav.classList.toggle('open', !isOpen);
+  overlay.classList.toggle('open', !isOpen);
+  btn.textContent = isOpen ? '☰' : '✕';
+}
+function closeMobileNav() {
+  document.getElementById('mobileNav').classList.remove('open');
+  document.getElementById('mobileNavOverlay').classList.remove('open');
+  document.getElementById('hamburgerBtn').textContent = '☰';
+}
+function mobileNavigate(page) {
+  closeMobileNav();
+  navigate(page);
+  // Sync mobile nav links
+  document.querySelectorAll('.mobile-nav-link').forEach(n => {
+    n.classList.toggle('active', n.dataset.page === page);
+  });
+}
+
+// Sync desktop nav-link active state with mobile
+const _origNavigate = navigate;
+// (already handled inside navigate + mobileNavigate)
+
+// ═══════════════════════════════════════════════════
 //  SEARCH
 // ═══════════════════════════════════════════════════
 document.getElementById('searchInput').addEventListener('input', function() {
   searchQuery = this.value;
+  const mob = document.getElementById('mobileSearchInput');
+  if (mob) mob.value = this.value;
+  if (currentPage==='collection') renderCollection();
+});
+document.getElementById('mobileSearchInput').addEventListener('input', function() {
+  searchQuery = this.value;
+  document.getElementById('searchInput').value = this.value;
   if (currentPage==='collection') renderCollection();
 });
 
@@ -1367,44 +1712,70 @@ function enqueueCoverFetch() {
 }
 
 async function fetchWithProxy(url) {
-  const proxy = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
-  const r = await fetch(proxy);
-  const j = await r.json();
-  return JSON.parse(j.contents);
+  const proxies = [
+    `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`,
+    `https://corsproxy.io/?${encodeURIComponent(url)}`,
+  ];
+  for (const proxy of proxies) {
+    try {
+      const r = await fetch(proxy, { signal: AbortSignal.timeout(8000) });
+      if (!r.ok) continue;
+      const text = await r.text();
+      // allorigins wraps in {contents:...}, corsproxy returns raw
+      try {
+        const j = JSON.parse(text);
+        if (j.contents) return JSON.parse(j.contents);
+        return j;
+      } catch(e) { return JSON.parse(text); }
+    } catch(e) { continue; }
+  }
+  throw new Error('All proxies failed');
+}
+
+async function fetchJSON(url) {
+  // Try direct first (works for iTunes, sometimes Deezer)
+  try {
+    const r = await fetch(url, { signal: AbortSignal.timeout(8000) });
+    if (r.ok) return await r.json();
+  } catch(e) { /* fallthrough to proxy */ }
+  return fetchWithProxy(url);
 }
 
 async function tryItunes(album) {
   const q   = `${album.artist} ${album.title}`;
-  const url = `https://itunes.apple.com/search?term=${encodeURIComponent(q)}&entity=album&limit=3&country=BR`;
-  const data = await fetchWithProxy(url);
-  const results = data.results || [];
-  // Try to find best match by title similarity
-  let best = results.find(r =>
-    r.collectionName.toLowerCase().includes(album.title.toLowerCase()) ||
-    album.title.toLowerCase().includes(r.collectionName.toLowerCase())
-  ) || results[0];
-  if (!best) return null;
-  return {
-    cover:     best.artworkUrl100.replace('100x100','600x600bb'),
-    itunesId:  String(best.collectionId),
-    itunesUrl: best.collectionViewUrl || '',
-  };
+  const url = `https://itunes.apple.com/search?term=${encodeURIComponent(q)}&entity=album&limit=5&country=US`;
+  try {
+    const data = await fetchJSON(url);
+    const results = data.results || [];
+    let best = results.find(r =>
+      r.collectionName.toLowerCase().includes(album.title.toLowerCase()) ||
+      album.title.toLowerCase().includes(r.collectionName.toLowerCase())
+    ) || results[0];
+    if (!best) return null;
+    return {
+      cover:     (best.artworkUrl100||'').replace('100x100','600x600bb'),
+      itunesId:  String(best.collectionId),
+      itunesUrl: best.collectionViewUrl || '',
+    };
+  } catch(e) { return null; }
 }
 
 async function tryDeezer(album) {
-  const q   = `${album.artist} ${album.title}`;
-  const url = `https://api.deezer.com/search?q=${encodeURIComponent(q)}&type=album&limit=3`;
-  const data = await fetchWithProxy(url);
-  const results = data.data || [];
-  let best = results.find(r =>
-    (r.title||'').toLowerCase().includes(album.title.toLowerCase()) ||
-    album.title.toLowerCase().includes((r.title||'').toLowerCase())
-  ) || results[0];
-  if (!best) return null;
-  return {
-    cover:     best.cover_xl || best.cover_big || best.cover || '',
-    deezerUrl: best.link || '',
-  };
+  const q   = `artist:"${album.artist}" album:"${album.title}"`;
+  const url = `https://api.deezer.com/search/album?q=${encodeURIComponent(q)}&limit=5`;
+  try {
+    const data = await fetchJSON(url);
+    const results = data.data || [];
+    let best = results.find(r =>
+      (r.title||'').toLowerCase().includes(album.title.toLowerCase()) ||
+      album.title.toLowerCase().includes((r.title||'').toLowerCase())
+    ) || results[0];
+    if (!best) return null;
+    return {
+      cover:     best.cover_xl || best.cover_big || best.cover_medium || best.cover || '',
+      deezerUrl: best.link || '',
+    };
+  } catch(e) { return null; }
 }
 
 // Last.fm placeholder MD5 – rejeitar imagens genéricas
@@ -1533,11 +1904,543 @@ function patchCoverInDOM(rank, coverUrl) {
 }
 
 // ═══════════════════════════════════════════════════
+//  THEME
+// ═══════════════════════════════════════════════════
+let currentTheme = localStorage.getItem('theme') || 'dark';
+function applyTheme() {
+  document.documentElement.setAttribute('data-theme', currentTheme);
+}
+function toggleTheme() {
+  currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+  localStorage.setItem('theme', currentTheme);
+  applyTheme();
+}
+applyTheme();
+
+// ═══════════════════════════════════════════════════
+//  BANDAS / ARTISTAS PAGE
+// ═══════════════════════════════════════════════════
+let artistsQuery  = '';
+let artistsCache  = {};  // nome → { image, bio, tags, similar, topAlbums, formed, listeners, playcount }
+
+function getArtistList() {
+  const map = {};
+  collection.forEach(a => {
+    if (!a.artist) return;
+    if (!map[a.artist]) map[a.artist] = { name: a.artist, albums: [], genres: new Set(), countries: new Set() };
+    map[a.artist].albums.push(a);
+    if (a.genre)    map[a.artist].genres.add(a.genre);
+    if (a.country && a.country !== 'Sem tags') map[a.artist].countries.add(a.country);
+  });
+  return Object.values(map);
+}
+
+function getSortedArtists() {
+  const sort = document.getElementById('artistsSortSel')?.value || 'name';
+  let list = getArtistList().filter(a =>
+    !artistsQuery || a.name.toLowerCase().includes(artistsQuery.toLowerCase())
+  );
+  if (sort === 'name')  list.sort((a,b) => a.name.localeCompare(b.name));
+  if (sort === 'count') list.sort((a,b) => b.albums.length - a.albums.length);
+  if (sort === 'rank')  list.sort((a,b) => {
+    const ra = Math.min(...a.albums.map(x=>x.rank));
+    const rb = Math.min(...b.albums.map(x=>x.rank));
+    return ra - rb;
+  });
+  return list;
+}
+
+function onArtistsSearch(val) {
+  artistsQuery = val;
+  renderArtistsPage();
+}
+
+function renderArtistsPage() {
+  const list  = getSortedArtists();
+  const grid  = document.getElementById('artistGrid');
+  const hero  = document.getElementById('artistsHeroCount');
+  const label = document.getElementById('artistsCountLabel');
+  const total = getArtistList().length;
+  if (hero)  hero.textContent = total;
+  if (label) label.textContent = list.length < total ? `${list.length} de ${total} artistas` : `${total} artistas`;
+  if (!grid) return;
+  if (!list.length) {
+    grid.innerHTML = '<div class="empty"><div class="empty-icon">🎸</div><h3>Nenhum artista encontrado</h3></div>';
+    return;
+  }
+  grid.innerHTML = list.map(a => artistCardHTML(a)).join('');
+}
+
+function artistCardHTML(artist) {
+  const cached   = artistsCache[artist.name];
+  const imgSrc   = cached?.image || '';
+  const topGenre = [...artist.genres][0] || '';
+  const bestRank = Math.min(...artist.albums.map(x=>x.rank));
+  const imgEl    = imgSrc
+    ? `<img class="artist-img" src="${esc(imgSrc)}" alt="" loading="lazy" onerror="this.style.display='none'">`
+    : '';
+  return `<div class="artist-card" data-aname="${esc(artist.name)}" onclick="openArtistCard(this)">
+    <div class="artist-img-wrap">
+      ${imgEl}
+      <div class="artist-img-ph" ${imgSrc ? 'style="opacity:0"' : ''}>🎵</div>
+    </div>
+    <div class="artist-info">
+      <div class="artist-name">${esc(artist.name)}</div>
+      <div class="artist-meta">
+        <span class="artist-count-n">${artist.albums.length}</span>
+        álbum${artist.albums.length !== 1 ? 's' : ''}
+        ${topGenre ? `<span style="color:var(--muted2)">·</span>${esc(topGenre)}` : ''}
+      </div>
+    </div>
+  </div>`;
+}
+
+// Wrapper seguro para onclick nos cards (evita problema de aspas)
+function openArtistCard(el) {
+  openArtist(el.dataset.aname);
+}
+
+// ── Abrir artista ──
+async function openArtist(artistName) {
+  const artistList = getArtistList();
+  const artist = artistList.find(a => a.name === artistName);
+  if (!artist) return;
+
+  const mc = document.getElementById('artistModalContent');
+  const bg = document.getElementById('artistModalBackdrop');
+
+  // Render skeleton imediato
+  mc.innerHTML = artistModalSkeleton(artist);
+  bg.classList.add('open');
+  document.body.style.overflow = 'hidden';
+
+  // Usar cache se disponível
+  if (artistsCache[artistName]) {
+    mc.innerHTML = artistModalHTML(artist, artistsCache[artistName]);
+    return;
+  }
+
+  // Buscar dados em paralelo (Wikipedia PT prioritária + Deezer + Last.fm)
+  const [wikiRes, deezerRes, lfmRes] = await Promise.allSettled([
+    fetchWikipediaBio(artistName),
+    fetchDeezerArtist(artistName),
+    fetchLastfmArtistInfo(artistName),
+  ]);
+
+  const wiki   = wikiRes.value;    // string ou null
+  const deezer = deezerRes.value;
+  const lfm    = lfmRes.value;
+
+  // Imagem: Deezer (melhor qualidade) > Last.fm
+  const lfmImages = lfm?.image || [];
+  const lfmImg    = lfmImages.find(i => i.size === 'mega' || i.size === 'extralarge')?.['#text'] || '';
+  const rawImg    = deezer?.picture_xl || deezer?.picture_big || lfmImg || '';
+  const image     = rawImg.includes('2a96cbd8b46e442fc41c2b86b821562f') ? '' : rawImg;
+
+  // Bio: preferência absoluta para Wikipedia PT (já priorizada em fetchWikipediaBio)
+  // Last.fm como complemento se Wikipedia não retornou nada
+  const lfmBio = cleanBio(lfm?.bio?.content || lfm?.bio?.summary || '');
+  const bio    = wiki || lfmBio || '';
+  const bioLang = wiki ? 'pt' : (lfmBio ? 'en' : '');
+
+  // Tags
+  const lfmTags = (lfm?.tags?.tag || []).map(t => t.name).slice(0, 5);
+  const tags    = lfmTags.length ? lfmTags : [...artist.genres].slice(0, 5);
+
+  // Artistas similares
+  const similar = (lfm?.similar?.artist || []).slice(0, 10).map(a => a.name);
+
+  // Formação e estatísticas
+  const formed    = lfm?.bio?.yearformed || '';
+  const listeners = lfm?.stats?.listeners || '';
+  const playcount = lfm?.stats?.playcount || '';
+
+  // Discografia Last.fm
+  let topAlbums = [];
+  if (localStorage.getItem('lastfmApiKey')) {
+    topAlbums = await fetchLastfmTopAlbums(artistName);
+  }
+
+  const info = { image, bio, bioLang, tags, similar, formed, listeners, playcount, topAlbums };
+  artistsCache[artistName] = info;
+
+  // Atualizar card com imagem se a página de artistas estiver aberta
+  if (currentPage === 'artists' && image) renderArtistsPage();
+
+  // Atualizar modal
+  if (bg.classList.contains('open')) {
+    mc.innerHTML = artistModalHTML(artist, info);
+  }
+}
+
+function closeArtistModal() {
+  document.getElementById('artistModalBackdrop').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function closeArtistOutside(e) {
+  if (e.target === document.getElementById('artistModalBackdrop')) closeArtistModal();
+}
+
+// ── Skeleton (loading) ──
+function artistModalSkeleton(artist) {
+  const albums = [...artist.albums].sort((a,b) => a.rank - b.rank);
+  return `
+    <div class="artist-hero">
+      <div class="artist-hero-gradient"></div>
+      <div class="artist-hero-content">
+        <div class="artist-portrait-ph">🎵</div>
+        <div class="artist-hero-info">
+          <div class="artist-hero-eyebrow">Artista / Banda</div>
+          <div class="artist-hero-name">${esc(artist.name)}</div>
+          <div class="artist-hero-tags">
+            ${[...artist.genres].slice(0,3).map(g=>`<span class="artist-hero-tag">${esc(g)}</span>`).join('')}
+          </div>
+          <div class="artist-hero-stats">
+            <div><span class="ahs-num">${albums.length}</span><span class="ahs-lbl">Na Coleção</span></div>
+            ${albums[0] ? `<div><span class="ahs-num">#${albums[0].rank}</span><span class="ahs-lbl">Melhor Rank</span></div>` : ''}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="artist-modal-body">
+      <div class="a-section">
+        <div class="a-section-title">Biografia</div>
+        <div style="display:flex;align-items:center;gap:10px;color:var(--muted);font-size:13px">
+          <div class="spinner"></div> Carregando informações...
+        </div>
+      </div>
+    </div>`;
+}
+
+// ── Modal completo ──
+function artistModalHTML(artist, info) {
+  const albums   = [...artist.albums].sort((a,b) => a.rank - b.rank);
+  const imgSrc   = info.image || '';
+  const bio      = info.bio   || '';
+  const tags     = info.tags?.length ? info.tags : [...artist.genres];
+  const similar  = info.similar  || [];
+  const topAlbums= info.topAlbums|| [];
+  const formed   = info.formed   || '';
+  const listeners= info.listeners? Number(info.listeners).toLocaleString('pt-BR') : '';
+  const curiosities = buildCuriosities(artist, info);
+
+  const bgEl      = imgSrc ? `<img class="artist-hero-bg" src="${esc(imgSrc)}" alt="">` : '';
+  const portraitEl= imgSrc
+    ? `<img class="artist-portrait" src="${esc(imgSrc)}" alt="" onerror="this.outerHTML='<div class=\\'artist-portrait-ph\\'>🎵</div>'">`
+    : `<div class="artist-portrait-ph">🎵</div>`;
+
+  // Discografia: mesclando Last.fm com coleção
+  let discoHTML = '';
+  if (topAlbums.length) {
+    const rows = topAlbums.map(alb => {
+      const inCol = albums.find(a => a.title.toLowerCase() === (alb.name||'').toLowerCase()
+        || (alb.name||'').toLowerCase().includes(a.title.toLowerCase())
+        || a.title.toLowerCase().includes((alb.name||'').toLowerCase()));
+      const imgArr  = alb.image || [];
+      const albImg  = (imgArr[3]?.['#text'] || imgArr[2]?.['#text'] || '').replace(/2a96cbd8b46e442fc41c2b86b821562f/,'');
+      const coverEl = albImg
+        ? `<img class="disco-img" src="${esc(albImg)}" loading="lazy" onerror="this.style.display='none'">`
+        : `<div class="disco-ph">♪</div>`;
+      const click   = inCol ? `onclick="closeArtistModal();openAlbum(${inCol.rank})"` : '';
+      return `<div class="disco-row${inCol?' in-col':''}" ${click}>
+        ${coverEl}
+        <div class="disco-info">
+          <div class="disco-name">${esc(alb.name||'')}</div>
+          <div class="disco-sub">${alb.playcount ? Number(alb.playcount).toLocaleString('pt-BR') + ' plays' : ''}</div>
+        </div>
+        ${inCol ? `<span class="disco-rank-badge">#${inCol.rank}</span>` : ''}
+      </div>`;
+    }).join('');
+    discoHTML = `<div class="a-section">
+      <div class="a-section-title">Discografia — Top álbuns no Last.fm</div>
+      <div class="disco-list">${rows}</div>
+    </div>`;
+  }
+
+  // Artistas similares
+  const artistNames = new Set(collection.map(a=>a.artist.toLowerCase()));
+  const similarHTML = similar.length ? `<div class="a-section">
+    <div class="a-section-title">Artistas Similares</div>
+    <div class="similar-wrap">
+      ${similar.map(s => {
+        const inLib = artistNames.has(s.toLowerCase());
+        return `<span class="similar-tag${inLib?'':' no-lib'}" data-aname="${esc(s)}" ${inLib?'onclick="closeArtistModal();openArtistCard(this)"':''}>${inLib?'🎵 ':''}${esc(s)}</span>`;
+      }).join('')}
+    </div>
+  </div>` : '';
+
+  return `
+    <div class="artist-hero">
+      ${bgEl}
+      <div class="artist-hero-gradient"></div>
+      <div class="artist-hero-content">
+        ${portraitEl}
+        <div class="artist-hero-info">
+          <div class="artist-hero-eyebrow">Artista / Banda</div>
+          <div class="artist-hero-name">${esc(artist.name)}</div>
+          <div class="artist-hero-tags">
+            ${tags.slice(0,4).map(t=>`<span class="artist-hero-tag">${esc(t)}</span>`).join('')}
+            ${formed ? `<span class="artist-hero-tag">Desde ${formed}</span>` : ''}
+          </div>
+          <div class="artist-hero-stats">
+            <div><span class="ahs-num">${albums.length}</span><span class="ahs-lbl">Na Coleção</span></div>
+            ${albums[0] ? `<div><span class="ahs-num">#${albums[0].rank}</span><span class="ahs-lbl">Melhor Rank</span></div>` : ''}
+            ${listeners ? `<div><span class="ahs-num" style="font-size:14px">${listeners}</span><span class="ahs-lbl">Ouvintes Last.fm</span></div>` : ''}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="artist-modal-body">
+
+      ${bio ? `<div class="a-section">
+        <div class="a-section-title" style="display:flex;align-items:center;justify-content:space-between">
+          Biografia
+          ${info.bioLang==='en' ? `<span style="font-size:9px;font-weight:700;padding:2px 7px;border-radius:2px;background:rgba(232,55,60,0.1);color:var(--accent);border:1px solid rgba(232,55,60,0.25);letter-spacing:0.5px">🌐 Em inglês</span>` : ''}
+        </div>
+        <div class="a-bio">${formatBio(bio)}</div>
+      </div>` : `<div class="a-section">
+        <div class="a-section-title">Biografia</div>
+        <p style="font-size:13px;color:var(--muted);line-height:1.6">Biografia não encontrada na Wikipedia. Configure sua chave Last.fm (⚙) para acessar mais informações sobre este artista.</p>
+      </div>`}
+
+      <div class="a-section">
+        <div class="a-section-title">Álbuns na Coleção (${albums.length})</div>
+        <div class="a-albums-grid">
+          ${albums.map(a => {
+            const coverEl = a.cover
+              ? `<img class="a-album-mini-cover" src="${esc(a.cover)}" loading="lazy" onerror="this.style.display='none'">`
+              : `<div class="a-album-mini-ph">♪</div>`;
+            return `<div class="a-album-mini" onclick="closeArtistModal();openAlbum(${a.rank})">
+              ${coverEl}
+              <div class="a-album-mini-rank">#${a.rank}</div>
+              <div class="a-album-mini-title">${esc(a.title)}</div>
+              <div class="a-album-mini-year">${a.year||''}</div>
+            </div>`;
+          }).join('')}
+        </div>
+      </div>
+
+      ${discoHTML}
+
+      ${curiosities.length ? `<div class="a-section">
+        <div class="a-section-title">Curiosidades</div>
+        <div class="curiosity-list">
+          ${curiosities.map(c=>`<div class="curiosity-row">
+            <span class="curiosity-icon">${c.icon}</span>
+            <span class="curiosity-text">${c.text}</span>
+          </div>`).join('')}
+        </div>
+      </div>` : ''}
+
+      ${similarHTML}
+
+    </div>`;
+}
+
+// ── Curiosidades geradas automaticamente ──
+function buildCuriosities(artist, info) {
+  const cur    = [];
+  const albums = [...artist.albums].sort((a,b) => a.rank - b.rank);
+  const years  = albums.map(a=>a.year).filter(Boolean).sort((a,b)=>a-b);
+
+  if (albums.length >= 1)
+    cur.push({ icon: '🏆', text: `Melhor posição na coleção: <strong>#${albums[0].rank}</strong> com <em>${esc(albums[0].title)}</em>${albums[0].year ? ` (${albums[0].year})` : ''}.` });
+
+  if (albums.length >= 3)
+    cur.push({ icon: '💿', text: `<strong>${esc(artist.name)}</strong> é um dos artistas mais presentes, com <strong>${albums.length} álbuns</strong> na lista.` });
+
+  if (years.length >= 2)
+    cur.push({ icon: '📅', text: `Presença que abrange <strong>${years[years.length-1] - years[0]} anos</strong> de carreira (${years[0]}–${years[years.length-1]}).` });
+
+  if (info?.formed && years[0])
+    cur.push({ icon: '🎸', text: `Formado em <strong>${info.formed}</strong>. Primeiro álbum na coleção lançado em <strong>${years[0]}</strong>.` });
+
+  if (info?.listeners) {
+    const n = Number(info.listeners);
+    if (n > 1000000)
+      cur.push({ icon: '👥', text: `Um dos grandes nomes: mais de <strong>${(n/1000000).toFixed(1)}M de ouvintes</strong> mensais no Last.fm.` });
+    else if (n > 0)
+      cur.push({ icon: '👥', text: `Conta com <strong>${n.toLocaleString('pt-BR')} ouvintes</strong> mensais no Last.fm.` });
+  }
+
+  const genres = [...artist.genres];
+  if (genres.length > 1)
+    cur.push({ icon: '🎵', text: `Transita por gêneros distintos: <strong>${genres.join(', ')}</strong>.` });
+
+  if (albums.length > 1) {
+    const worstRank = albums[albums.length-1];
+    cur.push({ icon: '📊', text: `Seus ${albums.length} álbuns na coleção vão do rank <strong>#${albums[0].rank}</strong> ao <strong>#${worstRank.rank}</strong>.` });
+  }
+
+  return cur;
+}
+
+// ── Bio helpers ──
+function cleanBio(bio) {
+  if (!bio) return '';
+  return bio
+    .replace(/<a\b[^>]*>Read more[^<]*<\/a>/gi, '')
+    .replace(/<a\b[^>]*>([^<]*)<\/a>/gi, '$1')
+    .replace(/<[^>]+>/g, '')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+}
+
+function formatBio(bio) {
+  const clean = bio;
+  if (clean.length <= 700)
+    return `<p>${clean.replace(/\n\n/g,'</p><p>').replace(/\n/g,'<br>')}</p>`;
+  const short = clean.slice(0, 700);
+  const full  = clean;
+  return `<div id="bioShort"><p>${short.replace(/\n\n/g,'</p><p>')}…
+    <span style="color:var(--accent);cursor:pointer;font-weight:700"
+      onclick="document.getElementById('bioShort').style.display='none';document.getElementById('bioFull').style.display='block'">
+      Ver mais ↓
+    </span></p></div>
+    <div id="bioFull" style="display:none"><p>${full.replace(/\n\n/g,'</p><p>').replace(/\n/g,'<br>')}</p></div>`;
+}
+
+// ── APIs ──
+async function fetchDeezerArtist(name) {
+  try {
+    const url  = `https://api.deezer.com/search/artist?q=${encodeURIComponent(name)}&limit=8`;
+    const data = await fetchJSON(url);
+    const list = data.data || [];
+    return list.find(r => r.name.toLowerCase() === name.toLowerCase()) || list[0] || null;
+  } catch(e) { return null; }
+}
+
+async function fetchLastfmArtistInfo(name) {
+  const apiKey = localStorage.getItem('lastfmApiKey') || '';
+  if (!apiKey) return null;
+  try {
+    const url = `https://ws.audioscrobbler.com/2.0/?method=artist.getInfo` +
+      `&artist=${encodeURIComponent(name)}&api_key=${encodeURIComponent(apiKey)}` +
+      `&autocorrect=1&lang=pt&format=json`;
+    const r = await fetch(url, { signal: AbortSignal.timeout(9000) });
+    if (!r.ok) return null;
+    const d = await r.json();
+    return (!d.error && d.artist) ? d.artist : null;
+  } catch(e) { return null; }
+}
+
+async function fetchLastfmTopAlbums(name) {
+  const apiKey = localStorage.getItem('lastfmApiKey') || '';
+  if (!apiKey) return [];
+  try {
+    const url = `https://ws.audioscrobbler.com/2.0/?method=artist.getTopAlbums` +
+      `&artist=${encodeURIComponent(name)}&api_key=${encodeURIComponent(apiKey)}` +
+      `&autocorrect=1&limit=24&format=json`;
+    const r = await fetch(url, { signal: AbortSignal.timeout(9000) });
+    if (!r.ok) return [];
+    const d = await r.json();
+    return (d.topalbums?.album || []).filter(a => a.name && a.name !== '(null)' && a.name !== '[Unknown]');
+  } catch(e) { return []; }
+}
+
+async function fetchWikipediaBio(name) {
+  // 1. Tenta direto na Wikipedia PT
+  try {
+    const url = `https://pt.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(name)}`;
+    const r   = await fetch(url, { signal: AbortSignal.timeout(7000) });
+    if (r.ok) {
+      const d = await r.json();
+      if (d.extract && d.extract.length > 80 && d.type !== 'disambiguation') return d.extract;
+    }
+  } catch(e) {}
+
+  // 2. Busca por nome na Wikipedia PT (artigo pode ter título diferente)
+  try {
+    const surl = `https://pt.wikipedia.org/w/api.php?action=query&list=search` +
+      `&srsearch=${encodeURIComponent(name + ' banda músico')}&srlimit=3&format=json&origin=*`;
+    const sr = await fetch(surl, { signal: AbortSignal.timeout(6000) });
+    if (sr.ok) {
+      const sd = await sr.json();
+      const hits = sd.query?.search || [];
+      for (const hit of hits) {
+        const purl = `https://pt.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(hit.title)}`;
+        const pr   = await fetch(purl, { signal: AbortSignal.timeout(6000) });
+        if (!pr.ok) continue;
+        const pd = await pr.json();
+        if (pd.extract && pd.extract.length > 80 && pd.type !== 'disambiguation') return pd.extract;
+      }
+    }
+  } catch(e) {}
+
+  // 3. Fallback: Wikipedia EN (tradução automática não disponível, mas melhor que nada)
+  try {
+    const url = `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(name)}`;
+    const r   = await fetch(url, { signal: AbortSignal.timeout(7000) });
+    if (r.ok) {
+      const d = await r.json();
+      if (d.extract && d.extract.length > 80 && d.type !== 'disambiguation') return d.extract;
+    }
+  } catch(e) {}
+
+  return null;
+}
+
+// ═══════════════════════════════════════════════════
+//  SETTINGS (Last.fm)
+// ═══════════════════════════════════════════════════
+function openSettings() {
+  const backdrop = document.getElementById('settingsBackdrop');
+  backdrop.classList.add('open');
+  document.body.style.overflow = 'hidden';
+  const key = localStorage.getItem('lastfmApiKey') || '';
+  const inp = document.getElementById('lastfmKeyInput');
+  if (inp) inp.value = key;
+  updateLastfmStatus();
+}
+function closeSettings() {
+  document.getElementById('settingsBackdrop').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function closeSettingsOutside(e) {
+  if (e.target === document.getElementById('settingsBackdrop')) closeSettings();
+}
+function updateLastfmStatus() {
+  const key  = localStorage.getItem('lastfmApiKey') || '';
+  const dot  = document.getElementById('lastfmSourceDot');
+  const stat = document.getElementById('lastfmKeyStatus');
+  if (key) {
+    if (dot)  dot.style.background = '#1DB954';
+    if (stat) stat.textContent = '✓ Chave salva. Last.fm ativo como primeira fonte.';
+  } else {
+    if (dot)  dot.style.background = 'var(--muted2)';
+    if (stat) stat.textContent = 'Nenhuma chave salva. Usando iTunes e Deezer.';
+  }
+}
+function saveLastfmKey() {
+  const key = (document.getElementById('lastfmKeyInput').value || '').trim();
+  if (!key) { toast('Cole uma API key válida.'); return; }
+  localStorage.setItem('lastfmApiKey', key);
+  updateLastfmStatus();
+  toast('Chave salva! Buscando capas via Last.fm...', 3000);
+  closeSettings();
+  // Re-queue covers that are missing
+  coverFetchQueue = collection.filter(a => !a.cover).map(a => a.rank);
+  processCoverQueue();
+}
+function clearLastfmKey() {
+  localStorage.removeItem('lastfmApiKey');
+  const inp = document.getElementById('lastfmKeyInput');
+  if (inp) inp.value = '';
+  updateLastfmStatus();
+  toast('Chave removida.');
+}
+
+// ═══════════════════════════════════════════════════
 //  INIT
 // ═══════════════════════════════════════════════════
 loadRealAlbums();
+// Set default sort select value
+const sortEl = document.getElementById('sortFilter');
+if (sortEl) sortEl.value = sortBy;
+updateLastfmStatus();
 renderCollection();
-toast('1000 álbuns carregados! Buscando capas (iTunes + Deezer)...', 4000);
+toast('1000 álbuns carregados! Buscando capas...', 3500);
 enqueueCoverFetch();
 </script>
 </body>
