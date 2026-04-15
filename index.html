@@ -1,0 +1,1544 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>1000 Álbuns Favoritos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsvectormap@1.5.1/dist/css/jsvectormap.min.css"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0a0a;
+      --surface: #111111;
+      --surface2: #1a1a1a;
+      --surface3: #222222;
+      --border: rgba(255,255,255,0.09);
+      --border2: rgba(255,255,255,0.18);
+      --accent: #E8373C;
+      --text: #ffffff;
+      --text2: #cccccc;
+      --muted: #888888;
+      --muted2: #444444;
+      --card-radius: 3px;
+      --transition: 0.15s ease;
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ─── TOPNAV ─── */
+    .topnav {
+      position: sticky; top: 0; z-index: 200;
+      background: #000;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    .topnav-inner {
+      max-width: 1440px; margin: 0 auto;
+      padding: 0 28px;
+      display: flex; align-items: stretch; gap: 0;
+      height: 58px;
+    }
+    .topnav-logo {
+      display: flex; flex-direction: column; align-items: flex-start;
+      justify-content: center; flex-shrink: 0;
+      cursor: pointer; gap: 1px;
+      padding-right: 24px;
+      border-right: 1px solid rgba(255,255,255,0.1);
+    }
+    .logo-main { font-size: 23px; font-weight: 900; color: var(--accent); letter-spacing: -1.5px; line-height: 1; }
+    .logo-sub  { font-size: 8px; font-weight: 700; color: var(--muted); letter-spacing: 3px; text-transform: uppercase; }
+
+    .topnav-nav { display: flex; align-items: stretch; padding-left: 4px; }
+    .nav-link {
+      display: flex; align-items: center; padding: 0 16px;
+      font-size: 13px; font-weight: 600; color: var(--muted);
+      cursor: pointer; text-decoration: none;
+      border-bottom: 2px solid transparent;
+      transition: all var(--transition); letter-spacing: 0.2px;
+      margin-bottom: -1px; white-space: nowrap;
+    }
+    .nav-link:hover { color: var(--text); }
+    .nav-link.active { color: var(--text); border-bottom-color: var(--accent); }
+
+    .topnav-right {
+      display: flex; align-items: center; gap: 12px; margin-left: auto;
+    }
+    .search-wrap { position: relative; }
+    .search-icon {
+      position: absolute; left: 11px; top: 50%; transform: translateY(-50%);
+      font-size: 13px; color: var(--muted); pointer-events: none;
+    }
+    #searchInput {
+      width: 230px;
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: var(--card-radius);
+      padding: 8px 12px 8px 34px;
+      font-size: 13px; font-family: inherit; color: var(--text);
+      outline: none; transition: all var(--transition);
+    }
+    #searchInput::placeholder { color: var(--muted); }
+    #searchInput:focus { border-color: var(--accent); width: 290px; }
+
+    .view-toggle { display: flex; gap: 3px; }
+    .view-btn {
+      width: 30px; height: 30px; border-radius: var(--card-radius);
+      background: transparent; border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 15px; color: var(--muted);
+      transition: all var(--transition);
+    }
+    .view-btn:hover { color: var(--text); border-color: var(--border2); }
+    .view-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+    /* ─── FILTER STRIP ─── */
+    .filter-strip {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      position: sticky; top: 58px; z-index: 190;
+    }
+    .filter-strip-inner {
+      max-width: 1440px; margin: 0 auto;
+      padding: 0 28px;
+      display: flex; align-items: center; gap: 8px;
+      height: 46px; flex-wrap: nowrap;
+    }
+    .filter-select {
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: var(--card-radius); padding: 5px 10px;
+      font-size: 12px; font-family: inherit; color: var(--text2);
+      outline: none; cursor: pointer; transition: border-color var(--transition);
+      max-width: 160px;
+    }
+    .filter-select:focus { border-color: var(--accent); }
+    .filter-divider { width: 1px; height: 24px; background: var(--border); flex-shrink: 0; margin: 0 4px; }
+
+    /* ─── MAIN CONTENT ─── */
+    .main-content { max-width: 1440px; margin: 0 auto; padding: 0 28px 80px; }
+
+    /* ─── EDITORIAL HEADER ─── */
+    .editorial-header {
+      padding: 48px 0 36px;
+      display: flex; align-items: flex-end; justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 24px; gap: 24px;
+    }
+    .editorial-eyebrow {
+      font-size: 11px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 2.5px; color: var(--accent); margin-bottom: 12px;
+    }
+    .editorial-title {
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-size: 44px; font-weight: 400; line-height: 1.1;
+      color: var(--text); margin-bottom: 10px;
+    }
+    .editorial-title em { font-style: italic; color: var(--accent); }
+    .editorial-sub { font-size: 14px; color: var(--muted); max-width: 460px; line-height: 1.6; }
+    .editorial-stats { font-size: 12px; color: var(--muted2); margin-top: 12px; }
+    .editorial-count { text-align: right; flex-shrink: 0; }
+    .count-num {
+      display: block; font-size: 84px; font-weight: 900; line-height: 1;
+      color: var(--accent); letter-spacing: -5px;
+    }
+    .count-label {
+      display: block; font-size: 11px; font-weight: 700; color: var(--muted);
+      text-transform: uppercase; letter-spacing: 3px; margin-top: 4px;
+    }
+
+    /* ─── RESULTS BAR ─── */
+    .results-bar { display: flex; align-items: center; padding: 10px 0 18px; }
+    .results-count { font-size: 13px; color: var(--muted); }
+    .results-count strong { color: var(--text); font-weight: 700; }
+
+    /* ─── GRID / LIST ─── */
+    .grid-view { display: grid; grid-template-columns: repeat(auto-fill, minmax(175px, 1fr)); gap: 20px; }
+    .list-view { display: flex; flex-direction: column; }
+
+    /* ─── ALBUM CARD ─── */
+    .album-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--card-radius); overflow: hidden; cursor: pointer;
+      transition: transform var(--transition), border-color var(--transition), box-shadow var(--transition);
+      position: relative;
+    }
+    .album-card:hover { border-color: var(--border2); transform: translateY(-3px); box-shadow: 0 8px 28px rgba(0,0,0,0.5); }
+    .album-card.top-10 { border-color: rgba(232,55,60,0.18); }
+    .album-card.top-10:hover { border-color: rgba(232,55,60,0.45); }
+
+    .album-cover-wrap { position: relative; aspect-ratio: 1; overflow: hidden; background: var(--surface2); }
+    .album-cover { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s ease; display: block; }
+    .album-card:hover .album-cover { transform: scale(1.04); }
+    .album-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to bottom, transparent 45%, rgba(0,0,0,0.65) 100%);
+      opacity: 0; transition: opacity var(--transition);
+    }
+    .album-card:hover .album-overlay { opacity: 1; }
+
+    .fav-btn {
+      position: absolute; top: 8px; right: 8px;
+      width: 28px; height: 28px; border-radius: 2px;
+      background: rgba(0,0,0,0.75); border: 1px solid rgba(255,255,255,0.12);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; cursor: pointer; color: var(--muted);
+      transition: all var(--transition); opacity: 0;
+    }
+    .album-card:hover .fav-btn { opacity: 1; }
+    .fav-btn.active { opacity: 1; color: var(--accent); }
+    .fav-btn:hover { background: rgba(232,55,60,0.3); border-color: var(--accent); color: var(--accent); }
+
+    .album-info { padding: 12px 12px 14px; }
+    .album-rank-row { display: flex; align-items: center; gap: 7px; margin-bottom: 7px; }
+    .album-rank { font-size: 20px; font-weight: 900; color: var(--accent); letter-spacing: -1px; line-height: 1; }
+    .top10-badge {
+      font-size: 8.5px; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 1px; color: var(--accent);
+      border: 1px solid var(--accent); padding: 2px 5px; border-radius: 2px; line-height: 1.4;
+    }
+    .album-artist {
+      font-size: 10px; font-weight: 700; color: var(--muted);
+      text-transform: uppercase; letter-spacing: 0.8px;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 4px;
+    }
+    .album-title {
+      font-size: 13px; font-weight: 700; color: var(--text);
+      line-height: 1.35; margin-bottom: 7px;
+      display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+    }
+    .album-meta { display: flex; align-items: center; gap: 5px; }
+    .album-year { font-size: 11px; color: var(--muted); }
+    .album-genre-tag { font-size: 10px; font-weight: 600; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .meta-sep { font-size: 10px; color: var(--muted2); }
+
+    .cover-placeholder {
+      width: 100%; height: 100%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 28px; color: var(--muted2);
+      background: linear-gradient(135deg, var(--surface2), var(--surface3));
+    }
+
+    /* ─── LIST ITEM ─── */
+    .list-item {
+      display: flex; align-items: center; gap: 14px;
+      padding: 11px 4px; border-bottom: 1px solid var(--border);
+      cursor: pointer; transition: all var(--transition);
+    }
+    .list-item:first-child { border-top: 1px solid var(--border); }
+    .list-item:hover { background: var(--surface); padding-left: 8px; }
+    .list-rank { font-size: 15px; font-weight: 900; color: var(--accent); width: 38px; text-align: right; flex-shrink: 0; }
+    .list-cover { width: 50px; height: 50px; border-radius: 2px; object-fit: cover; flex-shrink: 0; background: var(--surface2); }
+    .list-cover-ph {
+      width: 50px; height: 50px; border-radius: 2px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; color: var(--muted2); background: var(--surface2); flex-shrink: 0;
+    }
+    .list-info { flex: 1; min-width: 0; }
+    .list-title { font-size: 14px; font-weight: 700; margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .list-artist { font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .list-right { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+    .list-year { font-size: 12px; color: var(--muted); }
+    .list-genre { font-size: 11px; color: var(--muted); }
+    .list-fav { font-size: 15px; cursor: pointer; color: var(--muted2); transition: color var(--transition); }
+    .list-fav:hover, .list-fav.active { color: var(--accent); }
+
+    /* ─── EMPTY STATE ─── */
+    .empty { text-align: center; padding: 80px 20px; }
+    .empty-icon { font-size: 48px; margin-bottom: 18px; }
+    .empty h3 { font-size: 20px; font-weight: 700; margin-bottom: 8px; }
+    .empty p { font-size: 14px; color: var(--muted); max-width: 320px; margin: 0 auto; }
+
+    /* ─── PAGE ─── */
+    .page { display: none; }
+    .page.active { display: block; }
+
+    /* ─── PAGE HEADER (stats/map) ─── */
+    .page-header { padding: 48px 0 32px; border-bottom: 1px solid var(--border); margin-bottom: 32px; }
+    .page-header-eyebrow { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 2.5px; color: var(--accent); margin-bottom: 10px; }
+    .page-header-title { font-family: 'DM Serif Display', Georgia, serif; font-size: 38px; font-weight: 400; color: var(--text); }
+
+    /* ─── WORLD MAP PAGE ─── */
+    .country-top-bar {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(130px,1fr)); gap: 10px;
+      margin-bottom: 28px;
+    }
+    .country-top-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--card-radius); padding: 14px 12px;
+      cursor: pointer; transition: all var(--transition); text-align: center;
+    }
+    .country-top-card:hover { border-color: var(--accent); }
+    .country-top-card.selected { border-color: var(--accent); background: rgba(232,55,60,0.08); }
+    .country-top-flag { font-size: 22px; margin-bottom: 4px; }
+    .country-top-name { font-size: 11px; font-weight: 700; color: var(--text2); margin-bottom: 2px; }
+    .country-top-count { font-size: 18px; font-weight: 900; color: var(--accent); letter-spacing: -0.5px; }
+
+    .map-layout { display: grid; grid-template-columns: 1fr 280px; gap: 20px; align-items: start; margin-bottom: 32px; }
+    .map-container {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--card-radius); overflow: hidden; padding: 8px;
+    }
+    #world-map { height: 440px; }
+    .jvm-tooltip {
+      background: #000 !important; border: 1px solid var(--border2) !important;
+      color: #fff !important; font-family: 'Inter', sans-serif !important;
+      font-size: 12px !important; padding: 6px 10px !important;
+    }
+
+    .country-side-panel {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--card-radius); overflow: hidden; max-height: 456px;
+      display: flex; flex-direction: column;
+    }
+    .country-side-header {
+      padding: 14px 16px; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 10px;
+    }
+    .country-side-flag { font-size: 20px; }
+    .country-side-name { font-size: 14px; font-weight: 800; }
+    .country-side-count { font-size: 12px; color: var(--muted); }
+    .country-side-empty { padding: 24px; color: var(--muted); font-size: 13px; text-align: center; }
+    .country-album-list { overflow-y: auto; flex: 1; }
+    .country-album-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 9px 16px; border-bottom: 1px solid var(--border);
+      cursor: pointer; transition: background var(--transition);
+    }
+    .country-album-item:last-child { border-bottom: none; }
+    .country-album-item:hover { background: var(--surface2); }
+    .ca-rank { font-size: 12px; font-weight: 900; color: var(--accent); width: 28px; text-align: right; flex-shrink: 0; }
+    .ca-cover { width: 34px; height: 34px; border-radius: 2px; object-fit: cover; flex-shrink: 0; background: var(--surface2); }
+    .ca-cover-ph { width: 34px; height: 34px; border-radius: 2px; background: var(--surface2); display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
+    .ca-info { flex: 1; min-width: 0; }
+    .ca-title { font-size: 12px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .ca-artist { font-size: 10px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    /* ─── STATS PAGE ─── */
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px,1fr)); gap: 14px; margin-bottom: 40px; }
+    .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--card-radius); padding: 22px 20px; }
+    .stat-card-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.2px; color: var(--muted); margin-bottom: 8px; }
+    .stat-card-value { font-size: 36px; font-weight: 900; letter-spacing: -1.5px; color: var(--text); line-height: 1; }
+    .stat-card-sub { font-size: 12px; color: var(--muted2); margin-top: 6px; }
+
+    .section-heading { margin: 0 0 18px; }
+    .section-title { font-family: 'DM Serif Display', Georgia, serif; font-size: 24px; font-weight: 400; color: var(--text); }
+
+    .genre-bars-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: var(--card-radius); padding: 24px; margin-bottom: 40px; }
+    .genre-bars { display: flex; flex-direction: column; gap: 12px; }
+    .genre-bar-label { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 5px; }
+    .genre-bar-count { color: var(--muted); font-size: 12px; }
+    .genre-bar-track { height: 3px; border-radius: 2px; background: var(--surface3); overflow: hidden; }
+    .genre-bar-fill { height: 100%; border-radius: 2px; background: var(--accent); transition: width 0.4s ease; }
+
+    .decade-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(105px,1fr)); gap: 10px; }
+    .decade-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--card-radius); padding: 16px 14px; text-align: center;
+      cursor: pointer; transition: all var(--transition);
+    }
+    .decade-card:hover { border-color: var(--accent); }
+    .decade-num { font-size: 18px; font-weight: 800; margin-bottom: 4px; }
+    .decade-count { font-size: 11px; color: var(--muted); }
+
+    /* ─── MODAL ─── */
+    .modal-backdrop {
+      position: fixed; inset: 0; z-index: 1000;
+      background: rgba(0,0,0,0.88); backdrop-filter: blur(4px);
+      display: flex; align-items: center; justify-content: center;
+      padding: 20px; opacity: 0; pointer-events: none;
+      transition: opacity 0.2s ease;
+    }
+    .modal-backdrop.open { opacity: 1; pointer-events: all; }
+    .modal {
+      background: var(--surface); border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 4px;
+      width: 100%; max-width: 700px; max-height: 90vh;
+      overflow-y: auto;
+      transform: scale(0.96) translateY(14px);
+      transition: transform 0.2s ease; position: relative;
+    }
+    .modal-backdrop.open .modal { transform: scale(1) translateY(0); }
+
+    .modal-hero { position: relative; height: 260px; overflow: hidden; }
+    .modal-hero-bg {
+      position: absolute; inset: -20px;
+      filter: blur(30px) saturate(1.4); opacity: 0.35; transform: scale(1.2);
+      width: calc(100% + 40px); height: calc(100% + 40px); object-fit: cover;
+    }
+    .modal-hero-content {
+      position: relative; z-index: 1;
+      display: flex; align-items: flex-end; gap: 22px;
+      padding: 24px 28px; height: 100%;
+      background: linear-gradient(to bottom, transparent 0%, rgba(10,10,10,0.97) 100%);
+    }
+    .modal-cover { width: 120px; height: 120px; border-radius: 2px; object-fit: cover; box-shadow: 0 8px 28px rgba(0,0,0,0.7); flex-shrink: 0; }
+    .modal-cover-placeholder { width: 120px; height: 120px; border-radius: 2px; background: var(--surface2); display: flex; align-items: center; justify-content: center; font-size: 36px; flex-shrink: 0; color: var(--muted2); }
+    .modal-title-group { flex: 1; min-width: 0; }
+    .modal-rank-badge { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; color: var(--accent); margin-bottom: 7px; }
+    .modal-album-title { font-size: 22px; font-weight: 900; letter-spacing: -0.5px; line-height: 1.2; margin-bottom: 5px; }
+    .modal-album-artist { font-size: 12px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
+    .modal-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+    .modal-tag { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.4px; padding: 3px 8px; border-radius: 2px; background: var(--surface2); color: var(--muted); border: 1px solid var(--border); }
+    .modal-tag.year { color: var(--accent); border-color: rgba(232,55,60,0.3); background: rgba(232,55,60,0.08); }
+
+    .modal-body { padding: 20px 28px 28px; }
+    .modal-close {
+      position: absolute; top: 12px; right: 12px; z-index: 10;
+      width: 30px; height: 30px; border-radius: 2px;
+      background: rgba(0,0,0,0.7); border: 1px solid rgba(255,255,255,0.15);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; cursor: pointer; color: var(--text); transition: all var(--transition);
+    }
+    .modal-close:hover { background: rgba(255,255,255,0.12); }
+
+    .modal-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 9px 18px; border-radius: var(--card-radius);
+      font-size: 11.5px; font-weight: 800; font-family: inherit;
+      cursor: pointer; border: none; transition: all var(--transition);
+      text-transform: uppercase; letter-spacing: 0.8px; text-decoration: none;
+    }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-primary:hover { background: #c82b30; }
+    .btn-ghost { background: transparent; color: var(--text2); border: 1px solid var(--border); }
+    .btn-ghost:hover { border-color: var(--border2); background: var(--surface2); }
+
+    /* ─── STREAMING LINKS ─── */
+    .streaming-bar {
+      display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+      padding: 14px 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+      margin-bottom: 20px;
+    }
+    .streaming-label { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.2px; color: var(--muted); flex-shrink: 0; margin-right: 4px; }
+    .streaming-btn {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 6px 12px; border-radius: 20px;
+      font-size: 11.5px; font-weight: 700;
+      text-decoration: none; transition: all var(--transition);
+      letter-spacing: 0.2px;
+    }
+    .streaming-btn:hover { opacity: 0.85; transform: translateY(-1px); }
+    .streaming-btn.spotify  { background: #1DB954; color: #000; }
+    .streaming-btn.apple    { background: #fc3c44; color: #fff; }
+    .streaming-btn.deezer   { background: #A238FF; color: #fff; }
+    .streaming-btn.lastfm   { background: #D51007; color: #fff; }
+    .streaming-btn.youtube  { background: #FF0000; color: #fff; }
+    .streaming-btn-icon     { font-size: 13px; }
+
+    .detail-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px;
+    }
+    .detail-item { background: var(--surface2); border-radius: 2px; padding: 12px; border: 1px solid var(--border); }
+    .detail-item-label { font-size: 9.5px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.2px; color: var(--muted); margin-bottom: 5px; }
+    .detail-item-value { font-size: 14px; font-weight: 700; }
+
+    .tracks-header { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; color: var(--muted); }
+    .tracks-list { border: 1px solid var(--border); border-radius: 2px; overflow: hidden; }
+    .track-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 10px 14px; border-bottom: 1px solid var(--border);
+      font-size: 13px; transition: background var(--transition);
+    }
+    .track-item:last-child { border-bottom: none; }
+    .track-item:hover { background: var(--surface2); }
+    .track-num { color: var(--muted); width: 18px; font-size: 11px; text-align: right; }
+    .track-name { flex: 1; }
+    .track-dur { color: var(--muted); font-size: 12px; }
+
+    .modal-loading { display: flex; align-items: center; justify-content: center; padding: 24px; gap: 10px; color: var(--muted); font-size: 13px; }
+    .spinner { width: 16px; height: 16px; border: 2px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.7s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ─── TOAST ─── */
+    .toast {
+      position: fixed; bottom: 24px; right: 24px; z-index: 3000;
+      background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--accent);
+      border-radius: var(--card-radius); padding: 12px 18px;
+      font-size: 13px; font-weight: 500;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.6);
+      transform: translateY(80px); opacity: 0; transition: all 0.22s ease;
+    }
+    .toast.show { transform: translateY(0); opacity: 1; }
+
+    /* ─── SCROLLBAR ─── */
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.15); }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 960px) {
+      .editorial-title { font-size: 32px; }
+      .count-num { font-size: 60px; }
+      .grid-view { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 14px; }
+      .map-layout { grid-template-columns: 1fr; }
+      .country-side-panel { max-height: 300px; }
+      .topnav-inner, .filter-strip-inner, .main-content { padding-left: 18px; padding-right: 18px; }
+      #searchInput { width: 170px; }
+      #searchInput:focus { width: 210px; }
+    }
+    @media (max-width: 680px) {
+      .editorial-header { flex-direction: column; align-items: flex-start; gap: 20px; }
+      .editorial-count { text-align: left; }
+      .editorial-title { font-size: 26px; }
+      .count-num { font-size: 50px; }
+      .grid-view { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; }
+      .logo-sub { display: none; }
+      #searchInput { width: 120px; }
+      #searchInput:focus { width: 155px; }
+      .detail-grid { grid-template-columns: repeat(2, 1fr); }
+      .filter-strip-inner { gap: 6px; overflow-x: auto; }
+      .filter-select { font-size: 11px; padding: 4px 7px; }
+    }
+    @media (max-width: 440px) {
+      .grid-view { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══════════ TOPNAV ══════════ -->
+<header class="topnav">
+  <div class="topnav-inner">
+    <div class="topnav-logo" onclick="navigate('collection')">
+      <span class="logo-main">1000</span>
+      <span class="logo-sub">Álbuns</span>
+    </div>
+    <nav class="topnav-nav">
+      <a class="nav-link active" data-page="collection" onclick="navigate('collection')">Coleção</a>
+      <a class="nav-link" data-page="map" onclick="navigate('map')">Mapa Mundial</a>
+      <a class="nav-link" data-page="stats" onclick="navigate('stats')">Estatísticas</a>
+    </nav>
+    <div class="topnav-right">
+      <div class="search-wrap">
+        <span class="search-icon">🔎</span>
+        <input type="text" id="searchInput" placeholder="Buscar álbum, artista..." />
+      </div>
+      <div class="view-toggle">
+        <button class="view-btn active" id="viewGrid" title="Grade" onclick="setView('grid')">⊞</button>
+        <button class="view-btn" id="viewList" title="Lista" onclick="setView('list')">≡</button>
+      </div>
+      <button class="view-btn" id="settingsBtn" title="Configurar Last.fm API" onclick="openSettings()" style="border-color:rgba(255,255,255,0.15)">⚙</button>
+    </div>
+  </div>
+</header>
+
+<!-- ══════════ SETTINGS MODAL (Last.fm) ══════════ -->
+<div class="modal-backdrop" id="settingsBackdrop" onclick="closeSettingsOutside(event)" style="z-index:2000">
+  <div class="modal" id="settingsModal" style="max-width:480px">
+    <button class="modal-close" onclick="closeSettings()">✕</button>
+    <div style="padding:28px 28px 24px">
+      <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:2px;color:var(--accent);margin-bottom:10px">Configurações</div>
+      <h3 style="font-family:'DM Serif Display',serif;font-size:22px;font-weight:400;margin-bottom:20px">API do Last.fm</h3>
+
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:14px;margin-bottom:20px;font-size:13px;line-height:1.6;color:var(--muted)">
+        O Last.fm fornece capas de álbuns em alta qualidade gratuitamente.<br>
+        <strong style="color:var(--text2)">Como obter sua chave grátis:</strong><br>
+        1. Acesse <a href="https://www.last.fm/api/account/create" target="_blank" style="color:var(--accent)">last.fm/api/account/create</a><br>
+        2. Crie uma conta (ou faça login)<br>
+        3. Preencha o formulário e copie sua <em>API Key</em>
+      </div>
+
+      <label style="display:block;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:6px">Sua API Key</label>
+      <input type="text" id="lastfmKeyInput" placeholder="ex: a1b2c3d4e5f6..." autocomplete="off"
+        style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:10px 14px;font-size:14px;font-family:inherit;color:var(--text);outline:none;margin-bottom:8px;transition:border-color 0.15s ease"
+        onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor=''"
+      />
+      <div id="lastfmKeyStatus" style="font-size:12px;color:var(--muted);margin-bottom:18px;min-height:18px"></div>
+
+      <div style="display:flex;gap:10px">
+        <button class="btn btn-primary" onclick="saveLastfmKey()">Salvar e Buscar Capas</button>
+        <button class="btn btn-ghost" onclick="clearLastfmKey()" style="font-size:11px">Remover chave</button>
+      </div>
+
+      <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border)">
+        <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:8px">Fontes de Capas (ordem de prioridade)</div>
+        <div style="display:flex;flex-direction:column;gap:5px" id="coverSourceList">
+          <div style="display:flex;align-items:center;gap:8px;font-size:12px">
+            <span id="lastfmSourceDot" style="width:8px;height:8px;border-radius:50%;background:var(--muted2);flex-shrink:0"></span>
+            <span>Last.fm (direto, sem proxy)</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:12px">
+            <span style="width:8px;height:8px;border-radius:50%;background:#fc3c44;flex-shrink:0"></span>
+            <span>iTunes / Apple Music</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:12px">
+            <span style="width:8px;height:8px;border-radius:50%;background:#A238FF;flex-shrink:0"></span>
+            <span>Deezer</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ FILTER STRIP ══════════ -->
+<div class="filter-strip">
+  <div class="filter-strip-inner">
+    <select class="filter-select" id="genreFilter" onchange="filterGenre(this.value)">
+      <option value="all">Todos os Gêneros</option>
+    </select>
+    <select class="filter-select" id="countryFilter" onchange="filterCountry(this.value)">
+      <option value="all">Todos os Países</option>
+    </select>
+    <select class="filter-select" id="yearFilter" onchange="filterYear(this.value)">
+      <option value="all">Todos os Anos</option>
+    </select>
+    <select class="filter-select" id="decadeFilter" onchange="filterDecade(this.value)">
+      <option value="all">Todas as Décadas</option>
+    </select>
+    <div class="filter-divider"></div>
+    <select class="filter-select" id="sortFilter" onchange="applyFilters()">
+      <option value="rank">Por Ranking</option>
+      <option value="title">Por Título</option>
+      <option value="artist">Por Artista</option>
+      <option value="year">Por Ano</option>
+      <option value="genre">Por Gênero</option>
+      <option value="country">Por País</option>
+    </select>
+  </div>
+</div>
+
+<!-- ══════════ MAIN CONTENT ══════════ -->
+<main class="main-content">
+
+  <!-- ── COLEÇÃO ── -->
+  <div class="page active" id="page-collection">
+    <div class="editorial-header">
+      <div>
+        <div class="editorial-eyebrow">Lista Definitiva</div>
+        <h1 class="editorial-title">Os <em>1000 Melhores</em><br>Álbuns de Todos os Tempos</h1>
+        <p class="editorial-sub">Uma curadoria pessoal dos maiores discos já gravados — do rock progressivo ao hip-hop, do jazz ao eletrônico.</p>
+        <div class="editorial-stats" id="header-stats"></div>
+      </div>
+      <div class="editorial-count">
+        <span class="count-num" id="heroCount">0</span>
+        <span class="count-label">álbuns</span>
+      </div>
+    </div>
+
+    <div class="results-bar">
+      <span class="results-count" id="resultsCount"></span>
+    </div>
+
+    <div id="albumGrid"></div>
+
+    <div class="empty" id="emptyState" style="display:none">
+      <div class="empty-icon">💿</div>
+      <h3>Nenhum álbum encontrado</h3>
+      <p>Tente ajustar os filtros ou o termo de busca.</p>
+    </div>
+  </div>
+
+  <!-- ── MAPA MUNDIAL ── -->
+  <div class="page" id="page-map">
+    <div class="page-header">
+      <div class="page-header-eyebrow">Explorar</div>
+      <h2 class="page-header-title">Mapa Mundial da Coleção</h2>
+    </div>
+
+    <div class="country-top-bar" id="countryTopBar"></div>
+
+    <div class="map-layout">
+      <div class="map-container">
+        <div id="world-map"></div>
+      </div>
+      <div class="country-side-panel" id="countrySidePanel">
+        <div class="country-side-header">
+          <span class="country-side-flag" id="countrySideFlag">🌍</span>
+          <div>
+            <div class="country-side-name" id="countrySideName">Selecione um país</div>
+            <div class="country-side-count" id="countrySideCount">Clique no mapa ou nas bandeiras acima</div>
+          </div>
+        </div>
+        <div class="country-side-empty" id="countrySideEmpty">Clique em um país para ver os álbuns.</div>
+        <div class="country-album-list" id="countryAlbumList" style="display:none"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── ESTATÍSTICAS ── -->
+  <div class="page" id="page-stats">
+    <div class="page-header">
+      <div class="page-header-eyebrow">Análise</div>
+      <h2 class="page-header-title">Estatísticas da Coleção</h2>
+    </div>
+    <div class="stats-grid" id="statsCards"></div>
+    <div class="section-heading"><h3 class="section-title">Distribuição por Gênero</h3></div>
+    <div class="genre-bars-wrap"><div class="genre-bars" id="genreBars"></div></div>
+    <div class="section-heading"><h3 class="section-title">Distribuição por Década</h3></div>
+    <div class="decade-grid" id="decadeGrid"></div>
+  </div>
+
+</main>
+
+<!-- ══════════ MODAL ══════════ -->
+<div class="modal-backdrop" id="modalBackdrop" onclick="closeModal(event)">
+  <div class="modal" id="modal">
+    <button class="modal-close" onclick="closeModalBtn()">✕</button>
+    <div id="modalContent"></div>
+  </div>
+</div>
+
+<!-- ══════════ TOAST ══════════ -->
+<div class="toast" id="toast"></div>
+
+<!-- ══════════ SCRIPTS ══════════ -->
+<script src="albums_data.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jsvectormap@1.5.1/dist/js/jsvectormap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jsvectormap@1.5.1/dist/maps/world.js"></script>
+<script>
+// ═══════════════════════════════════════════════════
+//  COUNTRY MAPPINGS
+// ═══════════════════════════════════════════════════
+// jsvectormap world.js usa códigos ISO em MAIÚSCULAS ('US', 'GB', ...)
+const PT_TO_ISO = {
+  'Estados Unidos': 'US', 'Reino Unido': 'GB', 'Brasil': 'BR',
+  'Alemanha': 'DE', 'França': 'FR', 'Japão': 'JP', 'Canadá': 'CA',
+  'Austrália': 'AU', 'Islândia': 'IS', 'Irlanda': 'IE', 'Suécia': 'SE',
+  'Jamaica': 'JM', 'Nigéria': 'NG', 'Nigeria': 'NG', 'Argentina': 'AR',
+  'Itália': 'IT', 'Espanha': 'ES', 'México': 'MX', 'Suíça': 'CH',
+  'Noruega': 'NO', 'Dinamarca': 'DK', 'Nova Zelândia': 'NZ',
+  'Coréia do Sul': 'KR', 'Coreia do Sul': 'KR', 'China': 'CN', 'Índia': 'IN',
+  'África do Sul': 'ZA', 'Cuba': 'CU', 'Portugal': 'PT', 'Bélgica': 'BE',
+  'Holanda': 'NL', 'Países Baixos': 'NL', 'Polônia': 'PL', 'Rússia': 'RU',
+  'Venezuela': 'VE', 'Chile': 'CL', 'Colômbia': 'CO', 'Peru': 'PE',
+  'Senegal': 'SN', 'Mali': 'ML', 'Gana': 'GH', 'Etiópia': 'ET',
+  'Quênia': 'KE', 'Israel': 'IL', 'Turquia': 'TR', 'Hungria': 'HU',
+  'República Checa': 'CZ', 'Áustria': 'AT', 'Finlândia': 'FI',
+  'Grécia': 'GR', 'Ucrânia': 'UA', 'Bahamas': 'BS', 'Panamá': 'PA',
+  'Singapura': 'SG', 'Escócia': 'GB', 'País de Gales': 'GB',
+};
+// ISO (maiúscula) → nome em português
+const ISO_TO_PT = {};
+Object.entries(PT_TO_ISO).forEach(([pt, iso]) => { if (!ISO_TO_PT[iso]) ISO_TO_PT[iso] = pt; });
+
+// Flags indexadas em MAIÚSCULAS para casar com jsvectormap
+const COUNTRY_FLAGS = {
+  'US':'🇺🇸','GB':'🇬🇧','BR':'🇧🇷','DE':'🇩🇪','FR':'🇫🇷','JP':'🇯🇵','CA':'🇨🇦',
+  'AU':'🇦🇺','IS':'🇮🇸','IE':'🇮🇪','SE':'🇸🇪','JM':'🇯🇲','NG':'🇳🇬','AR':'🇦🇷',
+  'IT':'🇮🇹','ES':'🇪🇸','MX':'🇲🇽','CH':'🇨🇭','NO':'🇳🇴','DK':'🇩🇰','NZ':'🇳🇿',
+  'KR':'🇰🇷','CN':'🇨🇳','IN':'🇮🇳','ZA':'🇿🇦','CU':'🇨🇺','PT':'🇵🇹','BE':'🇧🇪',
+  'NL':'🇳🇱','PL':'🇵🇱','RU':'🇷🇺','VE':'🇻🇪','CL':'🇨🇱','CO':'🇨🇴','PE':'🇵🇪',
+  'SN':'🇸🇳','ML':'🇲🇱','GH':'🇬🇭','ET':'🇪🇹','KE':'🇰🇪','IL':'🇮🇱','TR':'🇹🇷',
+  'HU':'🇭🇺','CZ':'🇨🇿','AT':'🇦🇹','FI':'🇫🇮','GR':'🇬🇷','UA':'🇺🇦',
+  'BS':'🇧🇸','PA':'🇵🇦','SG':'🇸🇬',
+};
+
+// ═══════════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════════
+let collection    = JSON.parse(localStorage.getItem('album1000') || '[]');
+let currentPage   = 'collection';
+let currentView   = 'grid';
+let activeGenre   = 'all';
+let activeCountry = 'all';
+let activeYear    = 'all';
+let activeDecade  = 'all';
+let searchQuery   = '';
+let sortBy        = 'rank';
+let mapInstance   = null;
+
+// ═══════════════════════════════════════════════════
+//  NAVIGATION
+// ═══════════════════════════════════════════════════
+function navigate(page) {
+  currentPage = page;
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + page)?.classList.add('active');
+  document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active'));
+  document.querySelector(`.nav-link[data-page="${page}"]`)?.classList.add('active');
+  if (page === 'stats') renderStats();
+  if (page === 'map')   renderMapPage();
+}
+
+// ═══════════════════════════════════════════════════
+//  SAVE
+// ═══════════════════════════════════════════════════
+function save() { localStorage.setItem('album1000', JSON.stringify(collection)); }
+
+// ═══════════════════════════════════════════════════
+//  VIEW
+// ═══════════════════════════════════════════════════
+function setView(v) {
+  currentView = v;
+  document.getElementById('viewGrid').classList.toggle('active', v === 'grid');
+  document.getElementById('viewList').classList.toggle('active', v === 'list');
+  renderCollection();
+}
+
+// ═══════════════════════════════════════════════════
+//  FILTERS
+// ═══════════════════════════════════════════════════
+function filterGenre(genre)     { activeGenre   = genre;   syncSelect('genreFilter',   genre);   applyFilters(); }
+function filterCountry(country) { activeCountry = country; syncSelect('countryFilter', country); applyFilters(); }
+function filterYear(year)       { activeYear    = year;    syncSelect('yearFilter',    year);
+  if (year !== 'all') { activeDecade = 'all'; syncSelect('decadeFilter','all'); }
+  applyFilters();
+}
+function filterDecade(d)        {
+  activeDecade = d; syncSelect('decadeFilter', d);
+  if (d !== 'all') { activeYear = 'all'; syncSelect('yearFilter','all'); }
+  applyFilters();
+}
+function applyFilters() {
+  sortBy = document.getElementById('sortFilter').value;
+  renderCollection();
+}
+function syncSelect(id, val) {
+  const el = document.getElementById(id);
+  if (el) el.value = val;
+}
+
+function getFiltered() {
+  let items = [...collection];
+  const q = searchQuery.toLowerCase().trim();
+  if (q) items = items.filter(a =>
+    a.title.toLowerCase().includes(q) ||
+    a.artist.toLowerCase().includes(q) ||
+    (a.genre||'').toLowerCase().includes(q) ||
+    String(a.year||'').includes(q) ||
+    (a.country||'').toLowerCase().includes(q)
+  );
+  if (activeGenre !== 'all')   items = items.filter(a => (a.genre||'').toLowerCase() === activeGenre.toLowerCase());
+  if (activeCountry !== 'all') items = items.filter(a => (a.country||'') === activeCountry);
+  if (activeYear !== 'all')    items = items.filter(a => String(a.year||'') === String(activeYear));
+  if (activeDecade !== 'all') {
+    const d = parseInt(activeDecade);
+    items = items.filter(a => a.year && Math.floor(a.year/10)*10 === d);
+  }
+  items.sort((a,b) => {
+    if (sortBy==='rank')    return a.rank - b.rank;
+    if (sortBy==='title')   return a.title.localeCompare(b.title);
+    if (sortBy==='artist')  return a.artist.localeCompare(b.artist);
+    if (sortBy==='year')    return (a.year||0) - (b.year||0);
+    if (sortBy==='genre')   return (a.genre||'').localeCompare(b.genre||'');
+    if (sortBy==='country') return (a.country||'').localeCompare(b.country||'');
+    return 0;
+  });
+  return items;
+}
+
+// ═══════════════════════════════════════════════════
+//  RENDER COLLECTION
+// ═══════════════════════════════════════════════════
+function renderCollection() {
+  const items = getFiltered();
+  const grid  = document.getElementById('albumGrid');
+  const empty = document.getElementById('emptyState');
+  const count = document.getElementById('resultsCount');
+
+  updateHero();
+  updateHeaderStats();
+  updateFilters();
+
+  if (collection.length === 0) {
+    grid.style.display = 'none'; empty.style.display = 'block'; count.textContent = ''; return;
+  }
+  empty.style.display = 'none'; grid.style.display = '';
+
+  const isFiltered = searchQuery || activeGenre!=='all' || activeCountry!=='all' || activeYear!=='all' || activeDecade!=='all';
+  count.innerHTML = `<strong>${items.length}</strong> álbum${items.length!==1?'s':''}${isFiltered?' <span style="color:var(--muted2)">· filtrado</span>':''}`;
+
+  if (currentView === 'grid') {
+    grid.className = 'grid-view';
+    grid.innerHTML = items.map(a => cardHTML(a)).join('');
+  } else {
+    grid.className = 'list-view';
+    grid.innerHTML = items.map(a => listItemHTML(a)).join('');
+  }
+}
+
+function cardHTML(a) {
+  const isTop10 = a.rank<=10 && sortBy==='rank' && activeGenre==='all' && activeCountry==='all' && activeYear==='all' && activeDecade==='all' && !searchQuery;
+  const coverSrc = a.cover
+    ? `<img class="album-cover" src="${esc(a.cover)}" alt="${esc(a.title)}" loading="lazy"
+         onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+       <div class="cover-placeholder" style="display:none">♪</div>`
+    : `<div class="cover-placeholder">♪</div>`;
+  return `<div class="album-card${isTop10?' top-10':''}" data-rank="${a.rank}" onclick="openAlbum(${a.rank})">
+    <div class="album-cover-wrap">
+      ${coverSrc}
+      <div class="album-overlay"></div>
+      <div class="fav-btn${a.fav?' active':''}" onclick="toggleFav(event,${a.rank})">♥</div>
+    </div>
+    <div class="album-info">
+      <div class="album-rank-row">
+        <span class="album-rank">#${a.rank}</span>
+        ${isTop10?'<span class="top10-badge">Top 10</span>':''}
+      </div>
+      <div class="album-artist">${esc(a.artist)}</div>
+      <div class="album-title">${esc(a.title)}</div>
+      <div class="album-meta">
+        ${a.year?`<span class="album-year">${a.year}</span>`:''}
+        ${a.year&&a.genre?`<span class="meta-sep">·</span>`:''}
+        ${a.genre?`<span class="album-genre-tag">${esc(a.genre)}</span>`:''}
+      </div>
+    </div>
+  </div>`;
+}
+
+function listItemHTML(a) {
+  const cover = a.cover
+    ? `<img class="list-cover" src="${esc(a.cover)}" alt="" loading="lazy" onerror="this.style.display='none'">`
+    : `<div class="list-cover list-cover-ph">♪</div>`;
+  return `<div class="list-item" data-rank="${a.rank}" onclick="openAlbum(${a.rank})">
+    <span class="list-rank">${a.rank}</span>
+    ${cover}
+    <div class="list-info">
+      <div class="list-title">${esc(a.title)}</div>
+      <div class="list-artist">${esc(a.artist)}</div>
+    </div>
+    <div class="list-right">
+      ${a.year?`<span class="list-year">${a.year}</span>`:''}
+      ${a.genre?`<span class="list-genre">${esc(a.genre)}</span>`:''}
+      <span class="list-fav${a.fav?' active':''}" onclick="toggleFav(event,${a.rank})">♥</span>
+    </div>
+  </div>`;
+}
+
+function updateHero() {
+  const n = collection.length;
+  const el = document.getElementById('heroCount');
+  if (el) el.textContent = n;
+}
+function updateHeaderStats() {
+  const artists = new Set(collection.map(a=>a.artist)).size;
+  const genres  = new Set(collection.map(a=>a.genre).filter(Boolean)).size;
+  const countries = new Set(collection.map(a=>a.country).filter(c=>c&&c!=='Sem tags')).size;
+  const el = document.getElementById('header-stats');
+  if (el) el.textContent = `${collection.length} álbuns · ${artists} artistas · ${genres} gêneros · ${countries} países`;
+}
+function updateFilters() {
+  // Genre
+  const genres = [...new Set(collection.map(a=>a.genre).filter(Boolean))].sort();
+  const gSel = document.getElementById('genreFilter');
+  if (gSel) {
+    const cur = gSel.value;
+    gSel.innerHTML = `<option value="all">Todos os Gêneros</option>` +
+      genres.map(g=>`<option value="${esc(g)}"${cur===g?' selected':''}>${esc(g)}</option>`).join('');
+  }
+  // Country
+  const countries = [...new Set(collection.map(a=>a.country).filter(c=>c&&c!=='Sem tags'))].sort();
+  const cSel = document.getElementById('countryFilter');
+  if (cSel) {
+    const cur = cSel.value;
+    cSel.innerHTML = `<option value="all">Todos os Países</option>` +
+      countries.map(c=>`<option value="${esc(c)}"${cur===c?' selected':''}>${esc(c)}</option>`).join('');
+  }
+  // Year
+  const years = [...new Set(collection.map(a=>a.year).filter(Boolean))].sort((a,b)=>b-a);
+  const ySel = document.getElementById('yearFilter');
+  if (ySel) {
+    const cur = ySel.value;
+    ySel.innerHTML = `<option value="all">Todos os Anos</option>` +
+      years.map(y=>`<option value="${y}"${String(cur)===String(y)?' selected':''}>${y}</option>`).join('');
+  }
+  // Decade
+  const decades = [...new Set(collection.map(a=>a.year?Math.floor(a.year/10)*10:null).filter(Boolean))].sort((a,b)=>a-b);
+  const dSel = document.getElementById('decadeFilter');
+  if (dSel) {
+    const cur = dSel.value;
+    dSel.innerHTML = `<option value="all">Todas as Décadas</option>` +
+      decades.map(d=>`<option value="${d}"${cur==d?' selected':''}>${d}s</option>`).join('');
+  }
+}
+
+// ═══════════════════════════════════════════════════
+//  WORLD MAP PAGE
+// ═══════════════════════════════════════════════════
+function buildCountryData() {
+  const data = {};
+  collection.forEach(a => {
+    if (!a.country || a.country==='Sem tags') return;
+    const iso = PT_TO_ISO[a.country];
+    if (iso) data[iso] = (data[iso]||0)+1;
+  });
+  return data;
+}
+
+function renderMapPage() {
+  renderCountryTopBar();
+  initOrUpdateMap();
+}
+
+function renderCountryTopBar() {
+  const barEl = document.getElementById('countryTopBar');
+  if (!barEl) return;
+  const counts = {};
+  collection.forEach(a => {
+    if (!a.country || a.country==='Sem tags') return;
+    counts[a.country] = (counts[a.country]||0)+1;
+  });
+  const top = Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,10);
+  barEl.innerHTML = top.map(([name, cnt]) => {
+    const iso  = PT_TO_ISO[name]||'';
+    const flag = COUNTRY_FLAGS[iso]||'🌐';
+    return `<div class="country-top-card" onclick="showCountryAlbums('${esc(name)}')" data-country="${esc(name)}">
+      <div class="country-top-flag">${flag}</div>
+      <div class="country-top-name">${esc(name)}</div>
+      <div class="country-top-count">${cnt}</div>
+    </div>`;
+  }).join('');
+}
+
+function initOrUpdateMap() {
+  const container = document.getElementById('world-map');
+  if (!container) return;
+
+  const countryData = buildCountryData();
+
+  if (mapInstance) {
+    try { mapInstance.series.regions[0].setValues(countryData); } catch(e) {}
+    return;
+  }
+
+  if (typeof jsVectorMap === 'undefined') {
+    container.innerHTML = '<div style="padding:40px;text-align:center;color:var(--muted)">Mapa indisponível offline.<br>Conecte-se à internet para carregar o mapa interativo.</div>';
+    return;
+  }
+
+  try {
+    mapInstance = new jsVectorMap({
+      selector: '#world-map',
+      map: 'world',
+      backgroundColor: 'transparent',
+      zoomButtons: false,
+      regionStyle: {
+        initial:  { fill: '#1e1e1e', stroke: '#333', strokeWidth: 0.5, fillOpacity: 1 },
+        hover:    { fill: '#c82b30', cursor: 'pointer' },
+        selected: { fill: '#E8373C' }
+      },
+      series: {
+        regions: [{
+          attribute: 'fill',
+          values: countryData,
+          scale: ['#4a0a0a', '#E8373C'],
+          normalizeFunction: 'polynomial'
+        }]
+      },
+      onRegionTooltipShow(event, tooltip, code) {
+        // code vem em maiúsculas do jsvectormap ('US', 'GB', ...)
+        const ptName = ISO_TO_PT[code] || code;
+        const cnt    = countryData[code] || 0;
+        const flag   = COUNTRY_FLAGS[code] || '';
+        const label  = cnt === 0 ? 'Nenhum álbum' : `${cnt} álbum${cnt!==1?'s':''}`;
+        tooltip.text(`${flag} ${ptName} — ${label}`, true);
+      },
+      onRegionClick(event, code) {
+        const ptName = ISO_TO_PT[code];
+        if (ptName) showCountryAlbums(ptName);
+      }
+    });
+  } catch(e) {
+    console.warn('Map init error:', e);
+  }
+}
+
+function showCountryAlbums(countryName) {
+  const iso   = PT_TO_ISO[countryName] || '';
+  const flag  = COUNTRY_FLAGS[iso] || '🌐';
+  const albums = collection.filter(a => a.country === countryName).sort((a,b) => a.rank-b.rank);
+
+  // Update side panel
+  document.getElementById('countrySideFlag').textContent  = flag;
+  document.getElementById('countrySideName').textContent  = countryName;
+  document.getElementById('countrySideCount').textContent = `${albums.length} álbum${albums.length!==1?'s':''}`;
+
+  const emptyEl = document.getElementById('countrySideEmpty');
+  const listEl  = document.getElementById('countryAlbumList');
+  if (albums.length === 0) {
+    emptyEl.style.display = 'block'; listEl.style.display = 'none'; return;
+  }
+  emptyEl.style.display = 'none'; listEl.style.display = 'block';
+  listEl.innerHTML = albums.map(a => {
+    const coverEl = a.cover
+      ? `<img class="ca-cover" src="${esc(a.cover)}" loading="lazy" onerror="this.style.display='none'">`
+      : `<div class="ca-cover-ph">♪</div>`;
+    return `<div class="country-album-item" onclick="openAlbum(${a.rank})">
+      <span class="ca-rank">#${a.rank}</span>
+      ${coverEl}
+      <div class="ca-info">
+        <div class="ca-title">${esc(a.title)}</div>
+        <div class="ca-artist">${esc(a.artist)}</div>
+      </div>
+    </div>`;
+  }).join('');
+
+  // Highlight selected top-bar card
+  document.querySelectorAll('.country-top-card').forEach(el => {
+    el.classList.toggle('selected', el.dataset.country === countryName);
+  });
+}
+
+// ═══════════════════════════════════════════════════
+//  STREAMING LINKS
+// ═══════════════════════════════════════════════════
+function streamingLinksHTML(album) {
+  const q    = encodeURIComponent(`${album.artist} ${album.title}`);
+  const qs   = encodeURIComponent(`${album.artist} ${album.title}`);
+  const spotifyUrl  = `https://open.spotify.com/search/${qs}`;
+  const appleUrl    = album.itunesUrl || `https://music.apple.com/search?term=${qs}`;
+  const deezerUrl   = album.deezerUrl  || `https://www.deezer.com/search/${qs}`;
+  const lastfmUrl   = `https://www.last.fm/music/${encodeURIComponent(album.artist)}/${encodeURIComponent(album.title)}`;
+  const ytUrl       = `https://music.youtube.com/search?q=${qs}`;
+
+  return `<div class="streaming-bar">
+    <span class="streaming-label">Ouvir em</span>
+    <a href="${spotifyUrl}" target="_blank" rel="noopener" class="streaming-btn spotify">
+      <span class="streaming-btn-icon">♫</span> Spotify
+    </a>
+    <a href="${appleUrl}" target="_blank" rel="noopener" class="streaming-btn apple">
+      <span class="streaming-btn-icon">♪</span> Apple Music
+    </a>
+    <a href="${deezerUrl}" target="_blank" rel="noopener" class="streaming-btn deezer">
+      <span class="streaming-btn-icon">♫</span> Deezer
+    </a>
+    <a href="${ytUrl}" target="_blank" rel="noopener" class="streaming-btn youtube">
+      <span class="streaming-btn-icon">▶</span> YT Music
+    </a>
+    <a href="${lastfmUrl}" target="_blank" rel="noopener" class="streaming-btn lastfm">
+      <span class="streaming-btn-icon">◎</span> Last.fm
+    </a>
+  </div>`;
+}
+
+// ═══════════════════════════════════════════════════
+//  ALBUM DETAIL MODAL
+// ═══════════════════════════════════════════════════
+async function openAlbum(rank) {
+  const album = collection.find(a => a.rank === rank);
+  if (!album) return;
+  const mc = document.getElementById('modalContent');
+  const bg = document.getElementById('modalBackdrop');
+
+  const coverBg = album.cover ? `<img class="modal-hero-bg" src="${esc(album.cover)}" />` : '';
+  const coverEl = album.cover
+    ? `<img class="modal-cover" src="${esc(album.cover)}" alt="" />`
+    : `<div class="modal-cover-placeholder">♪</div>`;
+
+  mc.innerHTML = `
+    <div class="modal-hero">
+      ${coverBg}
+      <div class="modal-hero-content">
+        ${coverEl}
+        <div class="modal-title-group">
+          <div class="modal-rank-badge">Rank #${album.rank}</div>
+          <div class="modal-album-title">${esc(album.title)}</div>
+          <div class="modal-album-artist">${esc(album.artist)}</div>
+          <div class="modal-tags">
+            ${album.genre   ? `<span class="modal-tag">${esc(album.genre)}</span>` : ''}
+            ${album.year    ? `<span class="modal-tag year">${album.year}</span>` : ''}
+            ${album.country && album.country!=='Sem tags' ? `<span class="modal-tag">${esc(album.country)}</span>` : ''}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-body">
+      <div class="modal-actions">
+        <button class="btn btn-primary" onclick="toggleFavModal(${rank})" id="favBtnModal">
+          ${album.fav ? '♥ Favorito' : '♡ Favoritar'}
+        </button>
+      </div>
+      ${streamingLinksHTML(album)}
+      <div class="detail-grid">
+        <div class="detail-item">
+          <div class="detail-item-label">Álbum</div>
+          <div class="detail-item-value">${esc(album.title)}</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-item-label">Artista</div>
+          <div class="detail-item-value">${esc(album.artist)}</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-item-label">Ano</div>
+          <div class="detail-item-value">${album.year||'—'}</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-item-label">Gênero</div>
+          <div class="detail-item-value">${esc(album.genre)||'—'}</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-item-label">País</div>
+          <div class="detail-item-value">${album.country&&album.country!=='Sem tags'?esc(album.country):'—'}</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-item-label">Ranking</div>
+          <div class="detail-item-value" style="color:var(--accent)">#${album.rank}</div>
+        </div>
+      </div>
+      <div id="tracklistSection">
+        <div class="modal-loading"><div class="spinner"></div> Carregando faixas...</div>
+      </div>
+    </div>`;
+
+  bg.classList.add('open');
+  document.body.style.overflow = 'hidden';
+
+  // Fetch tracklist
+  if (album.itunesId) {
+    try {
+      const url   = `https://itunes.apple.com/lookup?id=${album.itunesId}&entity=song&limit=30`;
+      const proxy = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
+      const r = await fetch(proxy);
+      const j = await r.json();
+      const data = JSON.parse(j.contents);
+      const tracks = data.results.filter(x => x.wrapperType==='track');
+      if (tracks.length) {
+        document.getElementById('tracklistSection').innerHTML = `
+          <div class="tracks-header">Faixas</div>
+          <div class="tracks-list">
+            ${tracks.map(t=>`
+              <div class="track-item">
+                <span class="track-num">${t.trackNumber||'·'}</span>
+                <span class="track-name">${esc(t.trackName)}</span>
+                <span class="track-dur">${fmtMs(t.trackTimeMillis)}</span>
+              </div>`).join('')}
+          </div>`;
+      } else {
+        document.getElementById('tracklistSection').innerHTML = '';
+      }
+    } catch(e) {
+      document.getElementById('tracklistSection').innerHTML = '';
+    }
+  } else {
+    document.getElementById('tracklistSection').innerHTML = '';
+  }
+}
+
+function closeModal(e) { if (e.target===document.getElementById('modalBackdrop')) closeModalBtn(); }
+function closeModalBtn() { document.getElementById('modalBackdrop').classList.remove('open'); document.body.style.overflow=''; }
+
+function toggleFavModal(rank) {
+  const album = collection.find(a=>a.rank===rank);
+  if (!album) return;
+  album.fav = !album.fav;
+  save(); renderCollection();
+  const btn = document.getElementById('favBtnModal');
+  if (btn) btn.textContent = album.fav ? '♥ Favorito' : '♡ Favoritar';
+}
+
+// ═══════════════════════════════════════════════════
+//  FAV TOGGLE
+// ═══════════════════════════════════════════════════
+function toggleFav(event, rank) {
+  event.stopPropagation();
+  const album = collection.find(a=>a.rank===rank);
+  if (!album) return;
+  album.fav = !album.fav;
+  save(); renderCollection();
+}
+function rerank() { collection.forEach((a,i) => a.rank=i+1); }
+
+// ═══════════════════════════════════════════════════
+//  STATS PAGE
+// ═══════════════════════════════════════════════════
+function renderStats() {
+  const n       = collection.length;
+  const artists = new Set(collection.map(a=>a.artist)).size;
+  const genres  = [...new Set(collection.map(a=>a.genre).filter(Boolean))];
+  const years   = collection.map(a=>a.year).filter(Boolean);
+  const avgYear = years.length ? Math.round(years.reduce((s,y)=>s+y,0)/years.length) : '—';
+  const favs    = collection.filter(a=>a.fav).length;
+  const decades = [...new Set(years.map(y=>Math.floor(y/10)*10))].length;
+
+  document.getElementById('statsCards').innerHTML = [
+    ['Álbuns na Coleção', n,            `${Math.round(n/10)}% da meta de 1000`],
+    ['Artistas Únicos',  artists,       'artistas diferentes'],
+    ['Gêneros',          genres.length, 'estilos musicais'],
+    ['Ano Médio',        avgYear,       'da coleção'],
+    ['Favoritos ♥',     favs,          'álbuns favoritados'],
+    ['Décadas',          decades,       'décadas representadas'],
+  ].map(([label,val,sub])=>`
+    <div class="stat-card">
+      <div class="stat-card-label">${label}</div>
+      <div class="stat-card-value">${val}</div>
+      <div class="stat-card-sub">${sub}</div>
+    </div>`).join('');
+
+  const genreCount = {};
+  collection.forEach(a=>{ if(a.genre) genreCount[a.genre]=(genreCount[a.genre]||0)+1; });
+  const sorted = Object.entries(genreCount).sort((a,b)=>b[1]-a[1]).slice(0,15);
+  const maxG = sorted[0]?.[1]||1;
+  document.getElementById('genreBars').innerHTML = sorted.map(([g,cnt])=>`
+    <div class="genre-bar-item">
+      <div class="genre-bar-label"><span>${esc(g)}</span><span class="genre-bar-count">${cnt}</span></div>
+      <div class="genre-bar-track"><div class="genre-bar-fill" style="width:${(cnt/maxG)*100}%"></div></div>
+    </div>`).join('');
+
+  const decCount = {};
+  collection.forEach(a=>{ if(a.year){ const d=Math.floor(a.year/10)*10; decCount[d]=(decCount[d]||0)+1; }});
+  document.getElementById('decadeGrid').innerHTML = Object.entries(decCount).sort().map(([d,c])=>`
+    <div class="decade-card" onclick="navigate('collection');filterDecade('${d}')">
+      <div class="decade-num">${d}s</div>
+      <div class="decade-count">${c} álbuns</div>
+    </div>`).join('');
+}
+
+// ═══════════════════════════════════════════════════
+//  SEARCH
+// ═══════════════════════════════════════════════════
+document.getElementById('searchInput').addEventListener('input', function() {
+  searchQuery = this.value;
+  if (currentPage==='collection') renderCollection();
+});
+
+// ═══════════════════════════════════════════════════
+//  UTILS
+// ═══════════════════════════════════════════════════
+function esc(s)  { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function esc2(s) { return String(s||'').replace(/'/g,"\\'").replace(/"/g,'\\"'); }
+function fmtMs(ms) {
+  if (!ms) return '';
+  const s = Math.round(ms/1000);
+  return `${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`;
+}
+function toast(msg, dur=2800) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), dur);
+}
+
+// ═══════════════════════════════════════════════════
+//  COVER CACHE
+// ═══════════════════════════════════════════════════
+let coverCache  = JSON.parse(localStorage.getItem('coverCache')  || '{}');
+let itunesCache = JSON.parse(localStorage.getItem('itunesCache') || '{}');
+let deezerCache = JSON.parse(localStorage.getItem('deezerCache') || '{}');
+
+function saveCoverCache() {
+  localStorage.setItem('coverCache',  JSON.stringify(coverCache));
+  localStorage.setItem('itunesCache', JSON.stringify(itunesCache));
+  localStorage.setItem('deezerCache', JSON.stringify(deezerCache));
+}
+function coverKey(title, artist) { return `${title}|${artist}`; }
+
+// ═══════════════════════════════════════════════════
+//  LOAD REAL ALBUMS
+// ═══════════════════════════════════════════════════
+function loadRealAlbums() {
+  if (!window.ALBUMS_DATA) return;
+  const existingMap = {};
+  collection.forEach(a => { existingMap[coverKey(a.title,a.artist)] = a; });
+
+  collection = window.ALBUMS_DATA.map(d => {
+    const key      = coverKey(d.t, d.a);
+    const existing = existingMap[key];
+    const cached   = coverCache[key] || '';
+    const itunes   = itunesCache[String(d.r)] || {};
+    const deezer   = deezerCache[String(d.r)]  || {};
+    return {
+      rank:      d.r,
+      title:     d.t,
+      artist:    d.a,
+      year:      d.y || null,
+      genre:     d.g || '',
+      country:   d.c || '',
+      comment:   d.m || '',
+      cover:     existing?.cover     || cached || '',
+      itunesId:  existing?.itunesId  || itunes.id  || null,
+      itunesUrl: existing?.itunesUrl || itunes.url || '',
+      deezerUrl: existing?.deezerUrl || deezer.url || '',
+      fav:       existing?.fav       || false,
+      addedAt:   existing?.addedAt   || Date.now(),
+    };
+  });
+  save();
+}
+
+// ═══════════════════════════════════════════════════
+//  LAZY COVER FETCHING (iTunes → Deezer fallback)
+// ═══════════════════════════════════════════════════
+let coverFetchQueue  = [];
+let coverFetchActive = false;
+
+function enqueueCoverFetch() {
+  coverFetchQueue = collection.filter(a=>!a.cover).map(a=>a.rank);
+  processCoverQueue();
+}
+
+async function fetchWithProxy(url) {
+  const proxy = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
+  const r = await fetch(proxy);
+  const j = await r.json();
+  return JSON.parse(j.contents);
+}
+
+async function tryItunes(album) {
+  const q   = `${album.artist} ${album.title}`;
+  const url = `https://itunes.apple.com/search?term=${encodeURIComponent(q)}&entity=album&limit=3&country=BR`;
+  const data = await fetchWithProxy(url);
+  const results = data.results || [];
+  // Try to find best match by title similarity
+  let best = results.find(r =>
+    r.collectionName.toLowerCase().includes(album.title.toLowerCase()) ||
+    album.title.toLowerCase().includes(r.collectionName.toLowerCase())
+  ) || results[0];
+  if (!best) return null;
+  return {
+    cover:     best.artworkUrl100.replace('100x100','600x600bb'),
+    itunesId:  String(best.collectionId),
+    itunesUrl: best.collectionViewUrl || '',
+  };
+}
+
+async function tryDeezer(album) {
+  const q   = `${album.artist} ${album.title}`;
+  const url = `https://api.deezer.com/search?q=${encodeURIComponent(q)}&type=album&limit=3`;
+  const data = await fetchWithProxy(url);
+  const results = data.data || [];
+  let best = results.find(r =>
+    (r.title||'').toLowerCase().includes(album.title.toLowerCase()) ||
+    album.title.toLowerCase().includes((r.title||'').toLowerCase())
+  ) || results[0];
+  if (!best) return null;
+  return {
+    cover:     best.cover_xl || best.cover_big || best.cover || '',
+    deezerUrl: best.link || '',
+  };
+}
+
+// Last.fm placeholder MD5 – rejeitar imagens genéricas
+const LASTFM_PLACEHOLDER = '2a96cbd8b46e442fc41c2b86b821562f';
+
+async function tryLastFm(album) {
+  const apiKey = localStorage.getItem('lastfmApiKey') || '';
+  if (!apiKey) return null;
+  try {
+    // Last.fm permite CORS diretamente – sem proxy!
+    const url = `https://ws.audioscrobbler.com/2.0/?method=album.getInfo` +
+      `&api_key=${encodeURIComponent(apiKey)}` +
+      `&artist=${encodeURIComponent(album.artist)}` +
+      `&album=${encodeURIComponent(album.title)}` +
+      `&autocorrect=1&format=json`;
+    const r = await fetch(url, { signal: AbortSignal.timeout(8000) });
+    if (!r.ok) return null;
+    const data = await r.json();
+    if (data.error || !data.album) return null;
+    const images = data.album.image || [];
+    // Pegar a maior imagem disponível
+    const sizes = ['mega','extralarge','large','medium'];
+    let cover = '';
+    for (const sz of sizes) {
+      const img = images.find(i => i.size === sz);
+      if (img?.['#text'] && !img['#text'].includes(LASTFM_PLACEHOLDER)) {
+        cover = img['#text']; break;
+      }
+    }
+    if (!cover) return null;
+    return { cover, lastfmUrl: data.album.url || '' };
+  } catch(e) { return null; }
+}
+
+async function processCoverQueue() {
+  if (coverFetchActive) return;
+  coverFetchActive = true;
+  let fetched = 0;
+  const hasLastfm = !!localStorage.getItem('lastfmApiKey');
+
+  while (coverFetchQueue.length > 0) {
+    const rank  = coverFetchQueue.shift();
+    const album = collection.find(a=>a.rank===rank);
+    if (!album || album.cover) continue;
+
+    try {
+      let gotCover = false;
+
+      // ── 1. Last.fm (sem proxy, mais rápido e confiável) ──
+      if (hasLastfm) {
+        const lfm = await tryLastFm(album);
+        if (lfm?.cover) {
+          album.cover    = lfm.cover;
+          album.lastfmUrl = lfm.lastfmUrl || album.lastfmUrl || '';
+          const key = coverKey(album.title, album.artist);
+          coverCache[key] = album.cover;
+          fetched++; gotCover = true;
+          patchCoverInDOM(rank, album.cover);
+        }
+      }
+
+      // ── 2. iTunes ──
+      if (!gotCover) {
+        const itunes = await tryItunes(album);
+        if (itunes?.cover) {
+          album.cover     = itunes.cover;
+          album.itunesId  = album.itunesId  || itunes.itunesId;
+          album.itunesUrl = album.itunesUrl || itunes.itunesUrl;
+          const key = coverKey(album.title, album.artist);
+          coverCache[key] = album.cover;
+          itunesCache[String(rank)] = { id: album.itunesId, url: album.itunesUrl };
+          fetched++; gotCover = true;
+          patchCoverInDOM(rank, album.cover);
+        }
+      }
+
+      // ── 3. Deezer ──
+      if (!gotCover) {
+        await new Promise(res=>setTimeout(res,150));
+        const deezer = await tryDeezer(album);
+        if (deezer?.cover) {
+          album.cover     = deezer.cover;
+          album.deezerUrl = album.deezerUrl || deezer.deezerUrl;
+          const key = coverKey(album.title, album.artist);
+          coverCache[key] = album.cover;
+          deezerCache[String(rank)] = { url: album.deezerUrl };
+          fetched++;
+          patchCoverInDOM(rank, album.cover);
+        }
+      }
+    } catch(e) { /* skip */ }
+
+    if (fetched > 0 && fetched % 10 === 0) { save(); saveCoverCache(); }
+    await new Promise(res=>setTimeout(res, hasLastfm ? 120 : 220));
+  }
+
+  save(); saveCoverCache();
+  renderCollection();
+  coverFetchActive = false;
+}
+
+function patchCoverInDOM(rank, coverUrl) {
+  const card = document.querySelector(`.album-card[data-rank="${rank}"]`);
+  if (card) {
+    const wrap = card.querySelector('.album-cover-wrap');
+    if (wrap && !wrap.querySelector('.album-cover')) {
+      const ph = wrap.querySelector('.cover-placeholder');
+      if (ph) ph.remove();
+      const img = document.createElement('img');
+      img.className='album-cover'; img.src=coverUrl; img.loading='lazy';
+      img.onerror=()=>img.remove();
+      wrap.insertBefore(img, wrap.firstChild);
+    }
+  }
+  const listItem = document.querySelector(`.list-item[data-rank="${rank}"]`);
+  if (listItem) {
+    const ph = listItem.querySelector('.list-cover-ph');
+    if (ph) {
+      const img = document.createElement('img');
+      img.className='list-cover'; img.src=coverUrl; img.loading='lazy';
+      ph.replaceWith(img);
+    }
+  }
+  const caItem = document.querySelector(`.country-album-item .ca-cover-ph`);
+  // Also patch country panel if visible
+}
+
+// ═══════════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════════
+loadRealAlbums();
+renderCollection();
+toast('1000 álbuns carregados! Buscando capas (iTunes + Deezer)...', 4000);
+enqueueCoverFetch();
+</script>
+</body>
+</html>
