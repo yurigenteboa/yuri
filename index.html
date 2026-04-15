@@ -736,6 +736,105 @@
     @media (max-width: 440px) {
       .artist-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
     }
+
+    /* ─── COMPACT VIEW ─── */
+    .compact-view { display: grid; grid-template-columns: repeat(auto-fill, minmax(105px,1fr)); gap: 6px; }
+    .compact-view .album-info { padding: 6px 8px 8px; }
+    .compact-view .album-rank { font-size: 14px; }
+    .compact-view .album-rank-row { margin-bottom: 3px; }
+    .compact-view .album-artist { font-size: 8.5px; margin-bottom: 2px; }
+    .compact-view .album-title { font-size: 10.5px; -webkit-line-clamp: 1; margin-bottom: 0; }
+    .compact-view .album-meta { display: none; }
+    .compact-view .top10-badge { display: none; }
+    @media (max-width: 680px) { .compact-view { grid-template-columns: repeat(auto-fill,minmax(90px,1fr)); gap: 5px; } }
+    @media (max-width: 440px)  { .compact-view { grid-template-columns: repeat(3,1fr); gap: 4px; } }
+
+    /* ─── SORT PILLS ─── */
+    .sort-zone { border-bottom: 1px solid var(--border); }
+    .sort-zone-inner {
+      max-width: 1440px; margin: 0 auto; padding: 0 28px;
+      display: flex; align-items: center; gap: 3px;
+      height: 42px; overflow-x: auto; scrollbar-width: none;
+    }
+    .sort-zone-inner::-webkit-scrollbar { display: none; }
+    .sort-lbl { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;
+      color: var(--muted2); flex-shrink: 0; margin-right: 6px; }
+    .spill {
+      padding: 4px 13px; border-radius: 20px; flex-shrink: 0;
+      background: transparent; border: 1px solid transparent;
+      font-size: 12px; font-weight: 600; color: var(--muted);
+      cursor: pointer; white-space: nowrap; font-family: inherit;
+      transition: all var(--transition);
+    }
+    .spill:hover { color: var(--text); border-color: var(--border); }
+    .spill.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+    /* ─── FILTER PILLS ─── */
+    .filter-zone { padding: 7px 0 6px; }
+    .filter-zone-inner {
+      max-width: 1440px; margin: 0 auto; padding: 0 28px;
+      display: flex; align-items: center; gap: 6px;
+      overflow-x: auto; scrollbar-width: none; flex-wrap: nowrap;
+    }
+    .filter-zone-inner::-webkit-scrollbar { display: none; }
+    .fpill {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 5px 12px; border-radius: 20px; flex-shrink: 0;
+      background: var(--surface2); border: 1px solid var(--border);
+      font-size: 12px; font-weight: 600; color: var(--muted);
+      cursor: pointer; white-space: nowrap; font-family: inherit;
+      transition: all var(--transition);
+    }
+    .fpill:hover { border-color: var(--border2); color: var(--text); }
+    .fpill.has-val { background: rgba(232,55,60,0.08); border-color: rgba(232,55,60,0.35); color: var(--accent); }
+    .fpill-arr { font-size: 8px; color: var(--muted2); }
+    .fpill-clear {
+      padding: 5px 11px; border-radius: 20px; flex-shrink: 0;
+      background: transparent; border: 1px solid var(--border);
+      font-size: 11px; font-weight: 700; color: var(--muted);
+      cursor: pointer; white-space: nowrap; font-family: inherit;
+      transition: all var(--transition);
+    }
+    .fpill-clear:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* ─── FILTER PANEL ─── */
+    .fpanel {
+      position: fixed; z-index: 500;
+      background: var(--surface); border: 1px solid var(--border2);
+      border-radius: 8px; box-shadow: 0 8px 32px rgba(0,0,0,0.45);
+      width: 240px; overflow: hidden; display: none;
+    }
+    [data-theme="light"] .fpanel { box-shadow: 0 8px 32px rgba(0,0,0,0.14); }
+    .fpanel.open { display: block; }
+    .fpanel-search { padding: 9px 10px 7px; border-bottom: 1px solid var(--border); }
+    .fpanel-search input {
+      width: 100%; background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 4px; padding: 6px 10px;
+      font-size: 12px; font-family: inherit; color: var(--text); outline: none;
+    }
+    .fpanel-search input:focus { border-color: var(--accent); }
+    .fpanel-list { max-height: 258px; overflow-y: auto; }
+    .fpanel-item {
+      display: flex; align-items: center; gap: 6px;
+      padding: 8px 13px; font-size: 12.5px; cursor: pointer;
+      transition: background var(--transition);
+    }
+    .fpanel-item:hover { background: var(--surface2); }
+    .fpanel-item.active { color: var(--accent); font-weight: 700; }
+    .fpanel-item-cnt { font-size: 10.5px; color: var(--muted); margin-left: auto; }
+    .fpanel-check { font-size: 11px; color: var(--accent); margin-left: 2px; }
+
+    /* ─── MAP ZOOM BUTTONS ─── */
+    .jvm-zoom-btn {
+      background: var(--surface2) !important; border: 1px solid var(--border2) !important;
+      color: var(--text) !important; border-radius: 3px !important;
+      width: 26px !important; height: 26px !important;
+      line-height: 24px !important; font-size: 16px !important;
+    }
+    @media (max-width: 680px) {
+      .sort-zone-inner { padding: 0 16px; }
+      .filter-zone-inner { padding: 0 16px; }
+    }
   </style>
 </head>
 <body>
@@ -759,14 +858,14 @@
         <input type="text" id="searchInput" placeholder="Buscar álbum, artista..." />
       </div>
       <div class="view-toggle">
-        <button class="view-btn active" id="viewGrid" title="Grade" onclick="setView('grid')">⊞</button>
-        <button class="view-btn" id="viewList" title="Lista" onclick="setView('list')">≡</button>
+        <button class="view-btn active" id="viewGrid"    title="Grade normal" onclick="setView('grid')">⊞</button>
+        <button class="view-btn"        id="viewCompact" title="Grade compacta" onclick="setView('compact')">⊟</button>
+        <button class="view-btn"        id="viewList"    title="Lista" onclick="setView('list')">≡</button>
       </div>
-      <button class="view-btn" id="themeBtn" title="Alternar tema claro/escuro" onclick="toggleTheme()" style="border-color:rgba(255,255,255,0.15);font-size:16px">
+      <button class="view-btn" id="themeBtn" title="Alternar tema" onclick="toggleTheme()" style="border-color:rgba(255,255,255,0.15);font-size:16px">
         <span class="theme-btn-icon-dark">☀</span>
         <span class="theme-btn-icon-light">🌙</span>
       </button>
-      <button class="view-btn" id="settingsBtn" title="Configurar Last.fm API" onclick="openSettings()" style="border-color:rgba(255,255,255,0.15)">⚙</button>
     </div>
     <button class="hamburger-btn" id="hamburgerBtn" onclick="toggleMobileNav()" aria-label="Menu">☰</button>
   </div>
@@ -798,81 +897,49 @@
   </div>
 </nav>
 
-<!-- ══════════ SETTINGS MODAL (Last.fm) ══════════ -->
-<div class="modal-backdrop" id="settingsBackdrop" onclick="closeSettingsOutside(event)" style="z-index:2000">
-  <div class="modal" id="settingsModal" style="max-width:480px">
-    <button class="modal-close" onclick="closeSettings()">✕</button>
-    <div style="padding:28px 28px 24px">
-      <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:2px;color:var(--accent);margin-bottom:10px">Configurações</div>
-      <h3 style="font-family:'DM Serif Display',serif;font-size:22px;font-weight:400;margin-bottom:20px">API do Last.fm</h3>
-
-      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:14px;margin-bottom:20px;font-size:13px;line-height:1.6;color:var(--muted)">
-        O Last.fm fornece capas de álbuns em alta qualidade gratuitamente.<br>
-        <strong style="color:var(--text2)">Como obter sua chave grátis:</strong><br>
-        1. Acesse <a href="https://www.last.fm/api/account/create" target="_blank" style="color:var(--accent)">last.fm/api/account/create</a><br>
-        2. Crie uma conta (ou faça login)<br>
-        3. Preencha o formulário e copie sua <em>API Key</em>
-      </div>
-
-      <label style="display:block;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:6px">Sua API Key</label>
-      <input type="text" id="lastfmKeyInput" placeholder="ex: a1b2c3d4e5f6..." autocomplete="off"
-        style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:10px 14px;font-size:14px;font-family:inherit;color:var(--text);outline:none;margin-bottom:8px;transition:border-color 0.15s ease"
-        onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor=''"
-      />
-      <div id="lastfmKeyStatus" style="font-size:12px;color:var(--muted);margin-bottom:18px;min-height:18px"></div>
-
-      <div style="display:flex;gap:10px">
-        <button class="btn btn-primary" onclick="saveLastfmKey()">Salvar e Buscar Capas</button>
-        <button class="btn btn-ghost" onclick="clearLastfmKey()" style="font-size:11px">Remover chave</button>
-      </div>
-
-      <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border)">
-        <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:8px">Fontes de Capas (ordem de prioridade)</div>
-        <div style="display:flex;flex-direction:column;gap:5px" id="coverSourceList">
-          <div style="display:flex;align-items:center;gap:8px;font-size:12px">
-            <span id="lastfmSourceDot" style="width:8px;height:8px;border-radius:50%;background:var(--muted2);flex-shrink:0"></span>
-            <span>Last.fm (direto, sem proxy)</span>
-          </div>
-          <div style="display:flex;align-items:center;gap:8px;font-size:12px">
-            <span style="width:8px;height:8px;border-radius:50%;background:#fc3c44;flex-shrink:0"></span>
-            <span>iTunes / Apple Music</span>
-          </div>
-          <div style="display:flex;align-items:center;gap:8px;font-size:12px">
-            <span style="width:8px;height:8px;border-radius:50%;background:#A238FF;flex-shrink:0"></span>
-            <span>Deezer</span>
-          </div>
-        </div>
-      </div>
+<!-- ══════════ FILTER STRIP ══════════ -->
+<div class="filter-strip">
+  <!-- Linha 1: Sort pills -->
+  <div class="sort-zone">
+    <div class="sort-zone-inner" id="sortZone">
+      <!-- preenchido por renderSortPills() -->
+    </div>
+  </div>
+  <!-- Linha 2: Filter pills -->
+  <div class="filter-zone">
+    <div class="filter-zone-inner">
+      <button class="fpill" id="fpillGenre"   onclick="toggleFPanel('fpanel-genre',this)">
+        <span id="fpill-genre-lbl">Gênero</span><span class="fpill-arr">▾</span>
+      </button>
+      <button class="fpill" id="fpillCountry" onclick="toggleFPanel('fpanel-country',this)">
+        <span id="fpill-country-lbl">País</span><span class="fpill-arr">▾</span>
+      </button>
+      <button class="fpill" id="fpillDecade"  onclick="toggleFPanel('fpanel-decade',this)">
+        <span id="fpill-decade-lbl">Década</span><span class="fpill-arr">▾</span>
+      </button>
+      <button class="fpill" id="fpillYear"    onclick="toggleFPanel('fpanel-year',this)">
+        <span id="fpill-year-lbl">Ano</span><span class="fpill-arr">▾</span>
+      </button>
+      <button class="fpill-clear" id="fpillClear" onclick="clearAllFilters()" style="display:none">✕ Limpar</button>
     </div>
   </div>
 </div>
 
-<!-- ══════════ FILTER STRIP ══════════ -->
-<div class="filter-strip">
-  <div class="filter-strip-inner">
-    <select class="filter-select" id="genreFilter" onchange="filterGenre(this.value)">
-      <option value="all">Todos os Gêneros</option>
-    </select>
-    <select class="filter-select" id="countryFilter" onchange="filterCountry(this.value)">
-      <option value="all">Todos os Países</option>
-    </select>
-    <select class="filter-select" id="yearFilter" onchange="filterYear(this.value)">
-      <option value="all">Todos os Anos</option>
-    </select>
-    <select class="filter-select" id="decadeFilter" onchange="filterDecade(this.value)">
-      <option value="all">Todas as Décadas</option>
-    </select>
-    <div class="filter-divider"></div>
-    <select class="filter-select" id="sortFilter" onchange="applyFilters()">
-      <option value="rank-desc">Descobrir (#1000→#1)</option>
-      <option value="rank">Por Ranking (#1→#1000)</option>
-      <option value="title">Por Título</option>
-      <option value="artist">Por Artista</option>
-      <option value="year">Por Ano</option>
-      <option value="genre">Por Gênero</option>
-      <option value="country">Por País</option>
-    </select>
-  </div>
+<!-- Filter panels (fixed, position via JS) -->
+<div class="fpanel" id="fpanel-genre">
+  <div class="fpanel-search"><input type="text" placeholder="Buscar gênero…" oninput="searchFPanel(this,'fpanel-genre')"></div>
+  <div class="fpanel-list" id="fpanel-genre-list"></div>
+</div>
+<div class="fpanel" id="fpanel-country">
+  <div class="fpanel-search"><input type="text" placeholder="Buscar país…" oninput="searchFPanel(this,'fpanel-country')"></div>
+  <div class="fpanel-list" id="fpanel-country-list"></div>
+</div>
+<div class="fpanel" id="fpanel-decade">
+  <div class="fpanel-list" id="fpanel-decade-list"></div>
+</div>
+<div class="fpanel" id="fpanel-year">
+  <div class="fpanel-search"><input type="text" placeholder="Buscar ano…" oninput="searchFPanel(this,'fpanel-year')"></div>
+  <div class="fpanel-list" id="fpanel-year-list"></div>
 </div>
 
 <!-- ══════════ MAIN CONTENT ══════════ -->
@@ -1077,32 +1144,143 @@ function save() { localStorage.setItem('album1000', JSON.stringify(collection));
 // ═══════════════════════════════════════════════════
 function setView(v) {
   currentView = v;
-  document.getElementById('viewGrid').classList.toggle('active', v === 'grid');
-  document.getElementById('viewList').classList.toggle('active', v === 'list');
+  document.getElementById('viewGrid')?.classList.toggle('active', v === 'grid');
+  document.getElementById('viewCompact')?.classList.toggle('active', v === 'compact');
+  document.getElementById('viewList')?.classList.toggle('active', v === 'list');
   renderCollection();
 }
 
 // ═══════════════════════════════════════════════════
 //  FILTERS
 // ═══════════════════════════════════════════════════
-function filterGenre(genre)     { activeGenre   = genre;   syncSelect('genreFilter',   genre);   applyFilters(); }
-function filterCountry(country) { activeCountry = country; syncSelect('countryFilter', country); applyFilters(); }
-function filterYear(year)       { activeYear    = year;    syncSelect('yearFilter',    year);
-  if (year !== 'all') { activeDecade = 'all'; syncSelect('decadeFilter','all'); }
-  applyFilters();
-}
-function filterDecade(d)        {
-  activeDecade = d; syncSelect('decadeFilter', d);
-  if (d !== 'all') { activeYear = 'all'; syncSelect('yearFilter','all'); }
-  applyFilters();
-}
-function applyFilters() {
-  sortBy = document.getElementById('sortFilter').value;
+function filterGenre(genre) {
+  activeGenre = genre;
+  updateFilterPills();
   renderCollection();
 }
-function syncSelect(id, val) {
-  const el = document.getElementById(id);
-  if (el) el.value = val;
+function filterCountry(country) {
+  activeCountry = country;
+  updateFilterPills();
+  renderCollection();
+}
+function filterYear(year) {
+  activeYear = year;
+  if (year !== 'all') activeDecade = 'all';
+  updateFilterPills();
+  renderCollection();
+}
+function filterDecade(d) {
+  activeDecade = d;
+  if (d !== 'all') activeYear = 'all';
+  updateFilterPills();
+  renderCollection();
+}
+function applyFilters() { renderCollection(); }
+function clearAllFilters() {
+  activeGenre = 'all'; activeCountry = 'all'; activeYear = 'all'; activeDecade = 'all';
+  updateFilterPills();
+  renderCollection();
+  closeFPanels();
+}
+
+// ── Sort Pills ──
+const SORT_OPTIONS = [
+  { v: 'rank-desc', l: 'Descobrir' },
+  { v: 'rank',      l: 'Ranking ↑' },
+  { v: 'title',     l: 'Título A→Z' },
+  { v: 'artist',    l: 'Artista A→Z' },
+  { v: 'year',      l: 'Ano' },
+  { v: 'genre',     l: 'Gênero' },
+  { v: 'country',   l: 'País' },
+];
+function renderSortPills() {
+  const z = document.getElementById('sortZone');
+  if (!z) return;
+  z.innerHTML = `<span class="sort-lbl">Ordenar</span>` +
+    SORT_OPTIONS.map(o =>
+      `<button class="spill${sortBy===o.v?' active':''}" onclick="setSortPill('${o.v}')">${o.l}</button>`
+    ).join('');
+}
+function setSortPill(v) { sortBy = v; renderSortPills(); renderCollection(); }
+
+// ── Filter Pills state ──
+function updateFilterPills() {
+  const set = (id, lblId, val, placeholder) => {
+    const btn = document.getElementById(id);
+    const lbl = document.getElementById(lblId);
+    if (!btn || !lbl) return;
+    lbl.textContent = val === 'all' ? placeholder : val;
+    btn.classList.toggle('has-val', val !== 'all');
+  };
+  set('fpillGenre',   'fpill-genre-lbl',   activeGenre,   'Gênero');
+  set('fpillCountry', 'fpill-country-lbl', activeCountry, 'País');
+  set('fpillDecade',  'fpill-decade-lbl',  activeDecade === 'all' ? 'all' : activeDecade + 's', 'Década');
+  set('fpillYear',    'fpill-year-lbl',    activeYear,    'Ano');
+  const hasAny = activeGenre !== 'all' || activeCountry !== 'all' || activeYear !== 'all' || activeDecade !== 'all';
+  const cl = document.getElementById('fpillClear');
+  if (cl) cl.style.display = hasAny ? '' : 'none';
+}
+
+// ── Filter Panels ──
+let activeFPanel = null;
+function toggleFPanel(panelId, btnEl) {
+  if (activeFPanel && activeFPanel !== panelId) closeFPanels();
+  const panel = document.getElementById(panelId);
+  if (!panel) return;
+  if (panel.classList.contains('open')) { closeFPanels(); return; }
+  // Position below button
+  const rect = btnEl.getBoundingClientRect();
+  panel.style.top  = (rect.bottom + 5) + 'px';
+  panel.style.left = Math.min(rect.left, window.innerWidth - 250) + 'px';
+  panel.classList.add('open');
+  activeFPanel = panelId;
+  populateFPanel(panelId);
+  setTimeout(() => panel.querySelector('input')?.focus(), 50);
+}
+function closeFPanels() {
+  if (activeFPanel) { document.getElementById(activeFPanel)?.classList.remove('open'); activeFPanel = null; }
+}
+document.addEventListener('click', e => {
+  if (!e.target.closest('.fpanel') && !e.target.closest('.fpill')) closeFPanels();
+});
+
+function fItem(val, label, cnt, isActive, fn) {
+  return `<div class="fpanel-item${isActive?' active':''}" onclick="${fn}('${esc2(val)}');closeFPanels()">
+    <span>${label}</span>
+    ${cnt !== '' ? `<span class="fpanel-item-cnt">${cnt}</span>` : ''}
+    ${isActive ? '<span class="fpanel-check">✓</span>' : ''}
+  </div>`;
+}
+
+function populateFPanel(panelId) {
+  if (panelId === 'fpanel-genre') {
+    const genres = [...new Set(collection.map(a=>a.genre).filter(Boolean))].sort();
+    document.getElementById('fpanel-genre-list').innerHTML =
+      fItem('all','Todos os Gêneros','',activeGenre==='all','filterGenre') +
+      genres.map(g => fItem(g, g, collection.filter(a=>a.genre===g).length, activeGenre===g, 'filterGenre')).join('');
+  } else if (panelId === 'fpanel-country') {
+    const cs = [...new Set(collection.map(a=>a.country).filter(c=>c&&c!=='Sem tags'))].sort();
+    document.getElementById('fpanel-country-list').innerHTML =
+      fItem('all','Todos os Países','',activeCountry==='all','filterCountry') +
+      cs.map(c => fItem(c, c, collection.filter(a=>a.country===c).length, activeCountry===c, 'filterCountry')).join('');
+  } else if (panelId === 'fpanel-decade') {
+    const ds = [...new Set(collection.map(a=>a.year?Math.floor(a.year/10)*10:null).filter(Boolean))].sort();
+    document.getElementById('fpanel-decade-list').innerHTML =
+      fItem('all','Todas as Décadas','',activeDecade==='all','filterDecade') +
+      ds.map(d => fItem(String(d), d+'s', collection.filter(a=>a.year&&Math.floor(a.year/10)*10===d).length, String(activeDecade)===String(d), 'filterDecade')).join('');
+  } else if (panelId === 'fpanel-year') {
+    const ys = [...new Set(collection.map(a=>a.year).filter(Boolean))].sort((a,b)=>b-a);
+    document.getElementById('fpanel-year-list').innerHTML =
+      fItem('all','Todos os Anos','',activeYear==='all','filterYear') +
+      ys.map(y => fItem(String(y), String(y), collection.filter(a=>a.year===y).length, String(activeYear)===String(y), 'filterYear')).join('');
+  }
+}
+
+function searchFPanel(inp, panelId) {
+  const q = inp.value.toLowerCase();
+  document.getElementById(panelId)?.querySelectorAll('.fpanel-item').forEach(el => {
+    el.style.display = el.textContent.toLowerCase().includes(q) ? '' : 'none';
+  });
 }
 
 function getFiltered() {
@@ -1146,7 +1324,8 @@ function renderCollection() {
 
   updateHero();
   updateHeaderStats();
-  updateFilters();
+  renderSortPills();
+  updateFilterPills();
 
   if (collection.length === 0) {
     grid.style.display = 'none'; empty.style.display = 'block'; count.textContent = ''; return;
@@ -1158,6 +1337,9 @@ function renderCollection() {
 
   if (currentView === 'grid') {
     grid.className = 'grid-view';
+    grid.innerHTML = items.map(a => cardHTML(a)).join('');
+  } else if (currentView === 'compact') {
+    grid.className = 'compact-view';
     grid.innerHTML = items.map(a => cardHTML(a)).join('');
   } else {
     grid.className = 'list-view';
@@ -1226,6 +1408,11 @@ function updateHeaderStats() {
   if (el) el.textContent = `${collection.length} álbuns · ${artists} artistas · ${genres} gêneros · ${countries} países`;
 }
 function updateFilters() {
+  // mantido vazio — filtros agora são geridos por updateFilterPills() + populateFPanel()
+  updateFilterPills();
+  renderSortPills();
+}
+function _legacyUpdateFilters_unused() {
   // Genre
   const genres = [...new Set(collection.map(a=>a.genre).filter(Boolean))].sort();
   const gSel = document.getElementById('genreFilter');
@@ -1314,14 +1501,21 @@ function initOrUpdateMap() {
     return;
   }
 
+  // Cor base do mapa respeitando tema
+  const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
+  const mapBaseFill = isDark ? '#1a1a1a' : '#d8d8d5';
+  const mapStroke   = isDark ? '#2a2a2a' : '#bbb';
+
   try {
     mapInstance = new jsVectorMap({
       selector: '#world-map',
       map: 'world',
       backgroundColor: 'transparent',
-      zoomButtons: false,
+      zoomButtons: true,
+      zoomOnScroll: true,
+      zoomOnScrollSpeed: 2,
       regionStyle: {
-        initial:  { fill: '#1e1e1e', stroke: '#333', strokeWidth: 0.5, fillOpacity: 1 },
+        initial:  { fill: mapBaseFill, stroke: mapStroke, strokeWidth: 0.5, fillOpacity: 1 },
         hover:    { fill: '#c82b30', cursor: 'pointer' },
         selected: { fill: '#E8373C' }
       },
@@ -1329,8 +1523,8 @@ function initOrUpdateMap() {
         regions: [{
           attribute: 'fill',
           values: countryData,
-          scale: ['#4a0a0a', '#E8373C'],
-          normalizeFunction: 'polynomial'
+          scale: ['#8a1a1a', '#E8373C'],
+          normalizeFunction: 'linear'
         }]
       },
       onRegionTooltipShow(event, tooltip, code) {
@@ -1708,6 +1902,7 @@ let coverFetchActive = false;
 
 function enqueueCoverFetch() {
   coverFetchQueue = collection.filter(a=>!a.cover).map(a=>a.rank);
+  if (coverFetchQueue.length === 0) return;
   processCoverQueue();
 }
 
@@ -1743,17 +1938,19 @@ async function fetchJSON(url) {
 
 async function tryItunes(album) {
   const q   = `${album.artist} ${album.title}`;
-  const url = `https://itunes.apple.com/search?term=${encodeURIComponent(q)}&entity=album&limit=5&country=US`;
+  const url = `https://itunes.apple.com/search?term=${encodeURIComponent(q)}&entity=album&limit=8&country=US`;
   try {
     const data = await fetchJSON(url);
-    const results = data.results || [];
-    let best = results.find(r =>
-      r.collectionName.toLowerCase().includes(album.title.toLowerCase()) ||
-      album.title.toLowerCase().includes(r.collectionName.toLowerCase())
-    ) || results[0];
-    if (!best) return null;
+    const results = (data.results || []);
+    const norm = s => (s||'').toLowerCase().replace(/[^\w\s]/g,'').trim();
+    const at = norm(album.title);
+    // Tenta match exato, depois parcial, depois qualquer resultado
+    let best = results.find(r => norm(r.collectionName) === at)
+      || results.find(r => norm(r.collectionName).includes(at) || at.includes(norm(r.collectionName)))
+      || results[0];
+    if (!best?.artworkUrl100) return null;
     return {
-      cover:     (best.artworkUrl100||'').replace('100x100','600x600bb'),
+      cover:     best.artworkUrl100.replace('100x100bb','600x600bb').replace('100x100','600x600bb'),
       itunesId:  String(best.collectionId),
       itunesUrl: best.collectionViewUrl || '',
     };
@@ -1810,71 +2007,63 @@ async function tryLastFm(album) {
   } catch(e) { return null; }
 }
 
+// Processa em batches paralelos de 4 (4x mais rápido)
 async function processCoverQueue() {
   if (coverFetchActive) return;
   coverFetchActive = true;
-  let fetched = 0;
+  try {
+    while (coverFetchQueue.length > 0) {
+      const batch = coverFetchQueue.splice(0, 4);
+      await Promise.allSettled(batch.map(rank => fetchOneCover(rank)));
+      saveCoverCache();
+      await new Promise(res => setTimeout(res, 350));
+    }
+  } catch(e) { console.warn('Cover queue error:', e); }
+  finally {
+    save(); saveCoverCache(); renderCollection();
+    coverFetchActive = false;
+  }
+}
+
+async function fetchOneCover(rank) {
+  const album = collection.find(a => a.rank === rank);
+  if (!album || album.cover) return;
+  const key = coverKey(album.title, album.artist);
+
+  // ── 1. Last.fm (se tiver chave) ──
   const hasLastfm = !!localStorage.getItem('lastfmApiKey');
-
-  while (coverFetchQueue.length > 0) {
-    const rank  = coverFetchQueue.shift();
-    const album = collection.find(a=>a.rank===rank);
-    if (!album || album.cover) continue;
-
+  if (hasLastfm) {
     try {
-      let gotCover = false;
-
-      // ── 1. Last.fm (sem proxy, mais rápido e confiável) ──
-      if (hasLastfm) {
-        const lfm = await tryLastFm(album);
-        if (lfm?.cover) {
-          album.cover    = lfm.cover;
-          album.lastfmUrl = lfm.lastfmUrl || album.lastfmUrl || '';
-          const key = coverKey(album.title, album.artist);
-          coverCache[key] = album.cover;
-          fetched++; gotCover = true;
-          patchCoverInDOM(rank, album.cover);
-        }
+      const lfm = await tryLastFm(album);
+      if (lfm?.cover) {
+        album.cover = lfm.cover; coverCache[key] = lfm.cover;
+        patchCoverInDOM(rank, lfm.cover); return;
       }
-
-      // ── 2. iTunes ──
-      if (!gotCover) {
-        const itunes = await tryItunes(album);
-        if (itunes?.cover) {
-          album.cover     = itunes.cover;
-          album.itunesId  = album.itunesId  || itunes.itunesId;
-          album.itunesUrl = album.itunesUrl || itunes.itunesUrl;
-          const key = coverKey(album.title, album.artist);
-          coverCache[key] = album.cover;
-          itunesCache[String(rank)] = { id: album.itunesId, url: album.itunesUrl };
-          fetched++; gotCover = true;
-          patchCoverInDOM(rank, album.cover);
-        }
-      }
-
-      // ── 3. Deezer ──
-      if (!gotCover) {
-        await new Promise(res=>setTimeout(res,150));
-        const deezer = await tryDeezer(album);
-        if (deezer?.cover) {
-          album.cover     = deezer.cover;
-          album.deezerUrl = album.deezerUrl || deezer.deezerUrl;
-          const key = coverKey(album.title, album.artist);
-          coverCache[key] = album.cover;
-          deezerCache[String(rank)] = { url: album.deezerUrl };
-          fetched++;
-          patchCoverInDOM(rank, album.cover);
-        }
-      }
-    } catch(e) { /* skip */ }
-
-    if (fetched > 0 && fetched % 10 === 0) { save(); saveCoverCache(); }
-    await new Promise(res=>setTimeout(res, hasLastfm ? 120 : 220));
+    } catch(e) {}
   }
 
-  save(); saveCoverCache();
-  renderCollection();
-  coverFetchActive = false;
+  // ── 2. iTunes direto (suporta CORS nativamente) ──
+  try {
+    const itunes = await tryItunes(album);
+    if (itunes?.cover) {
+      album.cover = itunes.cover; coverCache[key] = itunes.cover;
+      album.itunesId  = album.itunesId  || itunes.itunesId;
+      album.itunesUrl = album.itunesUrl || itunes.itunesUrl;
+      itunesCache[String(rank)] = { id: album.itunesId, url: album.itunesUrl };
+      patchCoverInDOM(rank, itunes.cover); return;
+    }
+  } catch(e) {}
+
+  // ── 3. Deezer ──
+  try {
+    const deezer = await tryDeezer(album);
+    if (deezer?.cover) {
+      album.cover = deezer.cover; coverCache[key] = deezer.cover;
+      album.deezerUrl = album.deezerUrl || deezer.deezerUrl;
+      deezerCache[String(rank)] = { url: album.deezerUrl };
+      patchCoverInDOM(rank, deezer.cover);
+    }
+  } catch(e) {}
 }
 
 function patchCoverInDOM(rank, coverUrl) {
@@ -2381,66 +2570,17 @@ async function fetchWikipediaBio(name) {
   return null;
 }
 
-// ═══════════════════════════════════════════════════
-//  SETTINGS (Last.fm)
-// ═══════════════════════════════════════════════════
-function openSettings() {
-  const backdrop = document.getElementById('settingsBackdrop');
-  backdrop.classList.add('open');
-  document.body.style.overflow = 'hidden';
-  const key = localStorage.getItem('lastfmApiKey') || '';
-  const inp = document.getElementById('lastfmKeyInput');
-  if (inp) inp.value = key;
-  updateLastfmStatus();
-}
-function closeSettings() {
-  document.getElementById('settingsBackdrop').classList.remove('open');
-  document.body.style.overflow = '';
-}
-function closeSettingsOutside(e) {
-  if (e.target === document.getElementById('settingsBackdrop')) closeSettings();
-}
-function updateLastfmStatus() {
-  const key  = localStorage.getItem('lastfmApiKey') || '';
-  const dot  = document.getElementById('lastfmSourceDot');
-  const stat = document.getElementById('lastfmKeyStatus');
-  if (key) {
-    if (dot)  dot.style.background = '#1DB954';
-    if (stat) stat.textContent = '✓ Chave salva. Last.fm ativo como primeira fonte.';
-  } else {
-    if (dot)  dot.style.background = 'var(--muted2)';
-    if (stat) stat.textContent = 'Nenhuma chave salva. Usando iTunes e Deezer.';
-  }
-}
-function saveLastfmKey() {
-  const key = (document.getElementById('lastfmKeyInput').value || '').trim();
-  if (!key) { toast('Cole uma API key válida.'); return; }
-  localStorage.setItem('lastfmApiKey', key);
-  updateLastfmStatus();
-  toast('Chave salva! Buscando capas via Last.fm...', 3000);
-  closeSettings();
-  // Re-queue covers that are missing
-  coverFetchQueue = collection.filter(a => !a.cover).map(a => a.rank);
-  processCoverQueue();
-}
-function clearLastfmKey() {
-  localStorage.removeItem('lastfmApiKey');
-  const inp = document.getElementById('lastfmKeyInput');
-  if (inp) inp.value = '';
-  updateLastfmStatus();
-  toast('Chave removida.');
-}
+// Settings functions removed — Last.fm key can be set via:
+// localStorage.setItem('lastfmApiKey', 'YOUR_KEY')
 
 // ═══════════════════════════════════════════════════
 //  INIT
 // ═══════════════════════════════════════════════════
 loadRealAlbums();
-// Set default sort select value
-const sortEl = document.getElementById('sortFilter');
-if (sortEl) sortEl.value = sortBy;
-updateLastfmStatus();
+renderSortPills();
+updateFilterPills();
 renderCollection();
-toast('1000 álbuns carregados! Buscando capas...', 3500);
+toast('1000 álbuns carregados! Buscando capas...', 3000);
 enqueueCoverFetch();
 </script>
 </body>
